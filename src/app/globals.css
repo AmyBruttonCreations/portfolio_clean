@@ -69,14 +69,48 @@ body {
   }
 }
 .highlight-animate {
-  background: #EF1481;
-  background-repeat: no-repeat;
-  background-size: 0% 100%;
-  background-position: 0 100%;
-  animation: highlight-sweep 1.2s cubic-bezier(.68,-0.6,.32,1.6) 0.2s forwards;
-  padding: 0 0.2em;
-  border-radius: 0;
+  position: relative;
+  display: inline-block;
+  color: #FDF8F3;
   font-weight: 600;
+  padding: 0 0.2em;
+  overflow: hidden;
+  transition: color 0.2s;
+}
+.highlight-animate::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: #EF1481;
+  z-index: 1;
+  transition: none;
+  animation: highlight-wipe 1.2s cubic-bezier(.68,-0.6,.32,1.6) 0.2s forwards;
+}
+.highlight-animate span, .highlight-animate > * {
+  position: relative;
+  z-index: 2;
+}
+.highlight-animate.wiped {
+  color: #FDF8F3 !important;
+  transition: color 0.2s;
+}
+.highlight-animate.wiped::before {
+  opacity: 0;
+  width: 0% !important;
+  pointer-events: none;
+  transition: opacity 0.2s, width 0s 0.2s;
+}
+@keyframes highlight-wipe {
+  0% {
+    width: 0%;
+  }
+  80% {
+    width: 100%;
+  }
+  100% {
+    width: 100%;
+  }
 }
 
 /* Swipe reveal animation for title and image using clip-path */
@@ -169,6 +203,12 @@ body {
 
 .magenta-glow {
   box-shadow: 0 0 6px 1.5px #EF1481, 0 0 12px 3px #EF1481;
+}
+
+/* Yellow glow for contact icon */
+.yellow-glow {
+  box-shadow: 0 0 24px 8px #FFDC64, 0 0 48px 16px #FFDC64;
+  border: 2px solid red; /* DEBUG: Remove after confirming visibility */
 }
 
 /* Caption animation classes for vector art page */
@@ -440,4 +480,111 @@ body {
     clip-path: inset(0 0 0 0);
     opacity: 1;
   }
+}
+
+.marker-highlight {
+  position: relative;
+  display: inline-block;
+  color: #FDF8F3;
+  z-index: 1;
+}
+.marker-highlight-animate::before {
+  animation: marker-wipe-in-scale 0.9s cubic-bezier(.68,-0.6,.32,1.6) forwards;
+}
+@keyframes marker-wipe-in-scale {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+.marker-highlight::before {
+  content: '';
+  position: absolute;
+  left: -0.18em;
+  right: -0.18em;
+  top: 20%;
+  bottom: 10%;
+  background: #EF1481;
+  border-radius: 0.6em 0.4em 0.7em 0.5em / 0.5em 0.7em 0.4em 0.6em;
+  filter: blur(1px) brightness(1.15);
+  opacity: 1;
+  z-index: -1;
+  pointer-events: none;
+  width: auto;
+  transition: none;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.project-container,
+.sliver-gallery-container {
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+@media (max-width: 1024px), (orientation: portrait) {
+  .project-container {
+    aspect-ratio: auto !important;
+  }
+  @media (orientation: portrait) {
+    .sliver-gallery-container {
+      aspect-ratio: 16/9 !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      height: auto !important;
+    }
+    .sliver-gallery-container img {
+      width: 100% !important;
+      height: auto !important;
+      object-fit: cover !important;
+    }
+  }
+  @media (orientation: landscape) {
+    .sliver-gallery-container {
+      aspect-ratio: auto !important;
+    }
+  }
+  .sliver-gallery-container img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+    min-width: 0 !important;
+  }
+  .project-container + .project-container,
+  .sliver-gallery-container + .project-container,
+  .project-container + .sliver-gallery-container {
+    margin-top: 0 !important;
+  }
+  .project-container p,
+  .sliver-gallery-container p {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+@media (max-width: 1024px), (orientation: portrait) {
+  .project-container *,
+  .sliver-gallery-container * {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* Ensure all direct children of project/sliver containers fill the container */
+.project-container > *, .sliver-gallery-container > * {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+/* For images and videos inside project/sliver containers */
+.project-container img, .project-container video,
+.sliver-gallery-container img, .sliver-gallery-container video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block;
+  margin: 0 !important;
+  padding: 0 !important;
 }

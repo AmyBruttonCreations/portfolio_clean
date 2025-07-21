@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import HamburgerMenu from "../HamburgerMenu";
+import { MarkerHighlightInView } from "../MarkerHighlightInView";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -95,9 +96,9 @@ export default function Illustration3D() {
             I normally tell people I’m a picture maker, because I make visuals in so many different mediums.
           </p>
           <p className="mt-4">
-            <span className="highlight-animate" style={{ color: '#FDF8F3' }}>
+            <MarkerHighlightInView>
               Here are some pictures I made.
-            </span>
+            </MarkerHighlightInView>
           </p>
         </div>
       </div>

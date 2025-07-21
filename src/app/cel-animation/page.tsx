@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import HamburgerMenu from "../HamburgerMenu";
+import { MarkerHighlightInView } from "../MarkerHighlightInView";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -94,7 +95,7 @@ export default function CelAnimation() {
           <p style={{ color: '#FDF8F3' }}>
             Although I studied 3D and specialised in character modelling, somehow my career steered me towards cel animation.
             <br />
-            I hope to <span className="highlight-animate">never lose the childlike joy of hitting play and seeing things move.</span>
+            I hope to <MarkerHighlightInView>never lose the childlike joy of hitting play and seeing things move.</MarkerHighlightInView>
           </p>
         </div>
       </div>

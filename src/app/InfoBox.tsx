@@ -9,9 +9,10 @@ export default function InfoBox({ info }: InfoBoxProps) {
   const [show, setShow] = useState(false);
 
   return (
-    <div className="absolute bottom-4 left-4 z-40">
+    <div style={{ border: '4px solid lime', margin: '2rem' }}>
       <button
-        className="bg-purple-600 text-white rounded-full w-14 h-14 flex items-center justify-center text-4xl shadow-lg focus:outline-none"
+        className="bg-purple-600 text-white rounded-full flex items-center justify-center shadow-lg focus:outline-none"
+        style={{ width: 40, height: 40, fontSize: 28, border: '4px solid lime !important' }}
         aria-label="Show project info"
         tabIndex={0}
         onMouseEnter={() => setShow(true)}

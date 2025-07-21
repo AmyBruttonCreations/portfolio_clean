@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import HamburgerMenu from "../HamburgerMenu";
 import InfoBox from "../InfoBox";
 import React from "react";
+import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -77,7 +78,7 @@ function ExpandingSliverGallery({ images, alt }: { images: string[]; alt: string
           key={i}
           src={img}
           alt={alt}
-          className={`h-full object-cover cursor-pointer transition-all duration-500 ${hovered === i ? 'flex-[30]' : 'flex-[1]'}`}
+          className={`h-full w-full object-cover cursor-pointer transition-all duration-500 ${hovered === i ? 'flex-[30]' : 'flex-[1]'}`}
           style={{ minWidth: 0 }}
           onMouseEnter={() => setHovered(i)}
           onMouseLeave={() => setHovered(null)}
@@ -90,37 +91,42 @@ function ExpandingSliverGallery({ images, alt }: { images: string[]; alt: string
 // InfoPill component
 function InfoPill({ text }: { text: string }) {
   const [hovered, setHovered] = useState(false);
+  const [toggled, setToggled] = useState(false);
+  // Use the same mobile detection as elsewhere in the file
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
   return (
     <div
-      className={`transition-all duration-300 inline-flex items-center cursor-pointer overflow-hidden rounded-full magenta-glow${hovered ? ' pixelate-hover rgb-split glitch-anim' : ''}`}
+      className={`transition-all duration-300 inline-flex items-center justify-center cursor-pointer rounded-full magenta-glow`}
       style={{
         background: '#85DBD8',
-        height: 64,
-        minWidth: 64,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        width: hovered ? 'auto' : 64,
-        paddingRight: hovered ? 32 : 0,
-        paddingLeft: 0,
+        width: (hovered || toggled) ? 'auto' : 40,
+        minWidth: 40,
+        height: 40,
+        boxShadow: '0 0 6px 1.5px #EF1481, 0 0 12px 3px #EF1481',
+        fontSize: 28,
+        paddingLeft: (hovered || toggled) ? 16 : 0,
+        paddingRight: (hovered || toggled) ? 16 : 0,
+        transition: 'all 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => { if (!isMobile) setHovered(true); }}
+      onMouseLeave={() => { if (!isMobile) setHovered(false); }}
+      onClick={() => { if (isMobile) setToggled(t => !t); }}
     >
-      <div className="flex items-center justify-center w-16 h-16">
-        <span className="flex items-center justify-center w-16 h-16 text-2xl font-bold" style={{ color: '#EF1481' }}>i</span>
-      </div>
-      <span
-        className={`ml-4 text-gray-900 dark:text-gray-100 font-medium whitespace-nowrap transition-all duration-300 ${hovered ? 'animate-fade-in-right' : 'opacity-0'}`}
-        style={{
-          fontSize: '1.25rem',
-          whiteSpace: 'nowrap',
-          animationDuration: hovered ? '0.5s' : undefined,
-          animationTimingFunction: hovered ? 'cubic-bezier(.68,-0.6,.32,1.6)' : undefined,
-          animationFillMode: hovered ? 'both' : undefined,
-          animationDelay: hovered ? '0.1s' : undefined,
-        }}
-      >
-        {hovered ? text : ''}
-      </span>
+      <span className="flex items-center justify-center w-10 h-10 font-bold" style={{ color: '#EF1481' }}>i</span>
+      {(hovered || toggled) && (
+        <span
+          className="ml-2 text-gray-900 dark:text-gray-100 font-medium whitespace-nowrap transition-all duration-300 opacity-100"
+          style={{
+            fontSize: '1.25rem',
+            whiteSpace: 'nowrap',
+            maxWidth: 300,
+            overflow: 'hidden',
+            transition: 'all 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
+          }}
+        >
+          {text}
+        </span>
+      )}
     </div>
   );
 }
@@ -128,7 +134,6 @@ function InfoPill({ text }: { text: string }) {
 export default function VectorArt() {
   // Title style
   const titleStyle: React.CSSProperties = {
-    fontSize: 'clamp(1.5rem, 7vw, 8rem)',
     color: '#FDF8F3',
     textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
     lineHeight: 1.1,
@@ -142,11 +147,14 @@ export default function VectorArt() {
   // Caption style (less bold)
   const captionStyle: React.CSSProperties = {
     fontWeight: 400,
-    fontFamily: "'Montserrat', Arial, Helvetica, sans-serif"
+    fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+    fontSize: 'clamp(1rem, 1.5vw, 1.35rem)'
   };
   const [hasMounted, setHasMounted] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
+  const [showBanner, setShowBanner] = useState(false); // for initial loading spinner only
+  const [showMobileBanner, setShowMobileBanner] = useState(true); // for mobile notification
   const [bannerLoaded, setBannerLoaded] = useState(false);
+  const [showDelayedCaption, setShowDelayedCaption] = useState(false);
   useEffect(() => { setHasMounted(true); }, []);
   useEffect(() => {
     if (hasMounted) {
@@ -154,6 +162,14 @@ export default function VectorArt() {
       return () => clearTimeout(t);
     }
   }, [hasMounted]);
+  useEffect(() => {
+    if (showBanner) {
+      const t = setTimeout(() => setShowDelayedCaption(true), 1500);
+      return () => clearTimeout(t);
+    } else {
+      setShowDelayedCaption(false);
+    }
+  }, [showBanner]);
 
   const isMobile = useIsMobile();
   const [lightbox, setLightbox] = useState<{ open: boolean; img: string } | null>(null);
@@ -163,6 +179,24 @@ export default function VectorArt() {
   const [linkBounce, setLinkBounce] = useState(false);
   const [showMenuLinks, setShowMenuLinks] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
+    typeof window !== 'undefined' && window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
+  );
+  useEffect(() => {
+    function updateOrientation() {
+      if (window.innerWidth < window.innerHeight) {
+        setOrientation('portrait');
+      } else {
+        setOrientation('landscape');
+      }
+    }
+    window.addEventListener('resize', updateOrientation);
+    window.addEventListener('orientationchange', updateOrientation);
+    return () => {
+      window.removeEventListener('resize', updateOrientation);
+      window.removeEventListener('orientationchange', updateOrientation);
+    };
+  }, []);
 
   // Close menu on click outside
   useEffect(() => {
@@ -204,11 +238,33 @@ export default function VectorArt() {
 
   // Dismissible mobile notification
   const mobileBanner = (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-yellow-200 text-yellow-900 px-4 py-2 rounded shadow flex items-center gap-2 text-sm max-w-xs border border-yellow-400" style={{display: showBanner ? 'flex' : 'none'}}>
-      <span>For best experience, view on desktop or rotate your phone to landscape mode.</span>
+    <div
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-8 py-4 rounded-2xl shadow-lg flex items-center gap-3 font-bold text-base"
+      style={{
+        background: '#EF1481',
+        color: '#FDF8F3',
+        fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+        boxShadow: '0 0 16px 4px #EF1481, 0 0 32px 8px #fff',
+        letterSpacing: '0.02em',
+        minWidth: 0,
+        maxWidth: '90vw',
+        display: showMobileBanner ? 'flex' : 'none',
+      }}
+    >
+      <span>Pssst - all of this looks so much better in landscape. Feel free to rotate your phone or give it a spin on your laptop &lt;3 !</span>
       <button
-        className="ml-2 text-yellow-900 hover:text-yellow-700 font-bold"
-        onClick={() => setShowBanner(false)}
+        className="ml-2 flex items-center justify-center w-8 h-8 rounded-full"
+        style={{
+          background: '#FDF8F3',
+          color: '#EF1481',
+          border: 'none',
+          boxShadow: '0 0 8px 2px #EF1481',
+          cursor: 'pointer',
+          fontWeight: 900,
+          fontSize: 22,
+          padding: 0,
+        }}
+        onClick={() => setShowMobileBanner(false)}
         aria-label="Dismiss notification"
       >
         ×
@@ -216,60 +272,78 @@ export default function VectorArt() {
     </div>
   );
 
+  // Add in-view animation for Vector Art title
+  const [refTitle, glitchClassTitle] = useInViewAnimation<HTMLHeadingElement>("scanline-flicker-once");
+
   // Top banner with title and artwork
   const topBanner = (
     <div
       key="animated-banner"
-      className="w-full flex flex-col sm:flex-row crt-flicker-bg"
+      className="w-full flex flex-col md:flex-row vector-banner-vertical crt-flicker-bg"
       style={{
-        minHeight: '100vh',
         opacity: showBanner ? 1 : 0,
         transition: 'opacity 0.1s',
       }}
     >
-      <div className="flex-1 flex flex-col items-start justify-center px-8 h-screen">
+      <div
+        className="vector-banner-top flex flex-col items-center justify-center px-8 aspect-square w-screen md:w-[50vw] max-w-screen md:max-w-[50vw]"
+        style={{ minWidth: 0, minHeight: 0 }}
+      >
         {/* Title style */}
-        <div style={{ overflow: 'visible', padding: '2.5em 2.5em 0.5em 3.5em', margin: '2em 0 0.5em 0' }}>
+        <div
+          style={{
+            overflow: 'visible',
+            paddingTop: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '1.2em' : '2.5em',
+            paddingRight: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '0.5em' : '2.5em',
+            paddingBottom: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '0.5em' : '0.5em',
+            paddingLeft: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '0.5em' : '3.5em',
+            margin: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '1em 0 0.5em 0' : '2em 0 0.5em 0',
+            textAlign: 'center',
+          }}
+        >
           <h1
-            className="text-left font-bold uppercase scanline-flicker-once"
-            style={{ ...titleStyle, width: 'auto', maxWidth: 'none', overflow: 'visible', padding: 0, margin: '0 0 0 -0.15em' }}
+            ref={refTitle}
+            className={`font-bold uppercase text-[15vw] md:text-[7.5vw] w-full text-center flex items-center justify-center ${glitchClassTitle}`}
+            style={titleStyle}
           >
             <span className="swipe-reveal" style={{ overflow: 'visible', display: 'inline' }}>&nbsp;Vector Art</span>
           </h1>
         </div>
-        <div className="mt-6 text-left px-8" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div
+          className="mt-3 w-full px-8 text-center"
+          style={{ paddingLeft: 0, paddingRight: 0 }}
+        >
           <p style={{ color: '#FDF8F3', ...captionStyle }}>
             <span
               className="swipe-reveal"
-              style={{ display: 'block', fontSize: 'clamp(1.1rem, 2.5vw, 3rem)' }}
             >
               I used to hate Adobe Illustrator. I’m obsessed with details and always felt vector art forced things to be simplified.
             </span>
           </p>
           <p style={{ color: '#FDF8F3', marginTop: '1em', ...captionStyle }}>
-            <span
-              className="highlight-animate swipe-reveal"
-              style={{ fontSize: 'clamp(1.1rem, 2.5vw, 3rem)' }}
-            >
-              I have since changed my mind.
-            </span>
+            {showDelayedCaption && (
+              <MarkerHighlightInView style={{ fontSize: 'clamp(1rem, 1.5vw, 1.35rem)' }}>
+                I have since changed my mind.
+              </MarkerHighlightInView>
+            )}
           </p>
         </div>
       </div>
       <div
-        className="w-full sm:w-1/2 h-screen overflow-hidden flex items-center justify-center"
-        style={{ position: 'relative' }}
+        className="vector-banner-bottom flex items-center justify-center overflow-hidden aspect-square w-screen md:w-[50vw] max-w-screen md:max-w-[50vw]"
+        style={{ minWidth: 0, minHeight: 0, position: 'relative' }}
       >
         <img
           src="/vector-art/BannerArt_VA.png"
           alt="Banner artwork"
-          className="object-cover w-full h-full swipe-reveal"
+          className="object-cover w-full h-full"
           style={{
             borderRadius: 0,
             objectPosition: 'center',
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            display: 'block',
           }}
           onLoad={() => setBannerLoaded(true)}
         />
@@ -305,8 +379,8 @@ export default function VectorArt() {
           // Video project logic
           if (project.video) {
             return (
-              <div key={idx} className="w-full bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
-                <div className="relative w-full h-screen flex flex-col justify-center">
+              <div key={idx} className="project-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
+                <div className="relative w-full flex flex-col justify-center">
                   <video
                     src={project.video!}
                     autoPlay
@@ -325,8 +399,8 @@ export default function VectorArt() {
           // Expanding sliver gallery logic
           if (project.sliverImgs) {
             return (
-              <div key={idx} className="w-full bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
-                <div className="relative w-full h-screen flex flex-col justify-center">
+              <div key={idx} className="sliver-gallery-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
+                <div className="relative w-full flex flex-col justify-center">
                   <ExpandingSliverGallery images={project.sliverImgs} alt={project.title} />
                   <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
                     <InfoPill text={`Project info goes here...`} />
@@ -336,13 +410,12 @@ export default function VectorArt() {
             );
           }
           return (
-            <div key={idx} className="w-full bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
+            <div key={idx} className="project-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
               <div className="relative w-full flex flex-col justify-center">
                 <img
                   src={project.img || ""}
                   alt={project.title || ""}
                   className="w-full h-full object-cover cursor-pointer transition-transform hover:scale-105"
-                  onClick={() => setLightbox({ open: true, img: project.img || "" })}
                   style={{ borderRadius: 0 }}
                 />
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
@@ -353,22 +426,8 @@ export default function VectorArt() {
           );
         })}
       </div>
-      {/* Lightbox overlay */}
-      {lightbox?.open && (
-        <div
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 cursor-zoom-out"
-          onClick={() => setLightbox(null)}
-        >
-          <img
-            src={lightbox.img}
-            alt="Expanded project"
-            className="max-w-full max-h-full rounded shadow-lg"
-            style={{ objectFit: "contain" }}
-          />
-        </div>
-      )}
       {/* Mobile notification banner */}
-      {isMobile !== undefined && isMobile && mobileBanner}
+      {isMobile !== undefined && isMobile && orientation === 'portrait' && mobileBanner}
     </div>
   );
 } 
