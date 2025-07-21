@@ -13,8 +13,6 @@ export default function HamburgerMenu({ navLinks = defaultNavLinks }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [iconBounced, setIconBounced] = useState(false);
   const [showMenuLinks, setShowMenuLinks] = useState(false);
-  const [activeIdx, setActiveIdx] = useState<number | null>(null);
-  const [glitch, setGlitch] = useState(false); // NEW
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close menu on click outside
@@ -30,15 +28,10 @@ export default function HamburgerMenu({ navLinks = defaultNavLinks }) {
   }, [menuOpen]);
 
   // Bounce and glitch effect for icon
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
   const handleMenuToggle = useCallback((e?: React.MouseEvent) => {
-    // On desktop, only toggle on click (as before)
-    // On mobile, toggle on tap (same behavior, but explicit for consistency)
     setMenuOpen((open) => !open);
     setIconBounced(true);
-    setGlitch(true); // NEW
     setTimeout(() => setIconBounced(false), 400);
-    setTimeout(() => setGlitch(false), 400); // NEW
   }, []);
 
   // Delay menu links until after pill expands
@@ -127,7 +120,7 @@ export default function HamburgerMenu({ navLinks = defaultNavLinks }) {
                 animationDelay: `${i * 30}ms`
               }}
               tabIndex={menuOpen ? 0 : -1}
-              onClick={() => { setActiveIdx(i); setMenuOpen(false); }}
+              onClick={() => { setMenuOpen(false); }}
             >
               <span>{item.label}</span>
             </Link>
