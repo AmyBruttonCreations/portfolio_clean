@@ -23,7 +23,6 @@ body {
   cursor: url('/cursor.png') 0 0, auto !important;
   background: #E4A4BD;
   color: var(--foreground);
-  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
   font-weight: bold;
 }
 @keyframes bounce-in {
