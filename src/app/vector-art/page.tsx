@@ -142,12 +142,10 @@ export default function VectorArt() {
     margin: '0 auto',
     letterSpacing: '0.04em',
     fontWeight: 900,
-    fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
   };
   // Caption style (less bold)
   const captionStyle: React.CSSProperties = {
     fontWeight: 400,
-    fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
     fontSize: 'clamp(1rem, 1.5vw, 1.35rem)'
   };
   const [hasMounted, setHasMounted] = useState(false);

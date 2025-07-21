@@ -242,7 +242,6 @@ export default function Homepage() {
               <div
                 className="about-title"
                 style={{
-                  fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
                   fontWeight: 900,
                   fontSize: 'clamp(2.2rem, 5vw, 4rem)',
                   textTransform: 'uppercase',
@@ -261,19 +260,19 @@ export default function Homepage() {
                   &nbsp;Amy Rose
                 </span>
               </div>
-              <div className="about-caption" style={{ fontFamily: "'Montserrat', Arial, Helvetica, sans-serif", fontWeight: 900, fontSize: '1.25rem', color: '#EF1481', marginTop: '0.5rem', textTransform: 'none', letterSpacing: '0.01em' }}>
+              <div className="about-caption" style={{ fontWeight: 900, fontSize: '1.25rem', color: '#EF1481', marginTop: '0.5rem', textTransform: 'none', letterSpacing: '0.01em' }}>
                 and I like to tell stories with pictures
               </div>
             </div>
           </div>
           <div style={{ width: '90%', alignSelf: 'center', marginBottom: '1.25rem' }}>
-            <div className="about-maintext" style={{ fontFamily: "'Montserrat', Arial, Helvetica, sans-serif", fontWeight: 700, fontSize: '1.15rem', color: '#FDF8F3', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '0.75rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5ch' }}>
+            <div className="about-maintext" style={{ fontWeight: 700, fontSize: '1.15rem', color: '#FDF8F3', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '0.75rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5ch' }}>
               <span style={{ color: '#EF1481', fontWeight: 900 }}>I AM:</span>
               <span style={{ color: '#FDF8F3', fontWeight: 700 }}>
                 &nbsp;A CG ARTIST WITH A <MarkerHighlightInView>DEGREE IN DIGITAL DIRECTION</MarkerHighlightInView>, AND OVER A DECADE OF PROFESSIONAL EXPERIENCE. MY COMPREHENSIVE SKILLSET INCLUDES <MarkerHighlightInView>VECTOR ART</MarkerHighlightInView>, <MarkerHighlightInView>CEL ANIMATION</MarkerHighlightInView>, <MarkerHighlightInView>3D IMAGERY</MarkerHighlightInView> AND <MarkerHighlightInView>DIGITAL PAINTING</MarkerHighlightInView>, I STRIVE TO BRING OUT THE <MarkerHighlightInView>STORYTELLING DETAILS</MarkerHighlightInView> OF ANY VISUAL I CREATE, WHETHER ABSTRACT OR FIGURATIVE, STATIC OR ANIMATED.
               </span>
             </div>
-            <div className="about-secondarytext" style={{ fontFamily: "'Montserrat', Arial, Helvetica, sans-serif", fontWeight: 600, fontSize: '1.05rem', color: '#EF1481', textTransform: 'none', letterSpacing: '0.01em', marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5ch' }}>
+            <div className="about-secondarytext" style={{ fontWeight: 600, fontSize: '1.05rem', color: '#EF1481', textTransform: 'none', letterSpacing: '0.01em', marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5ch' }}>
               <span style={{ color: '#EF1481', fontWeight: 900 }}>i am also:</span>
               <span style={{ color: '#FDF8F3', fontWeight: 600 }}>
                 &nbsp;bilingual from birth, and trilingual since moving to Berlin // a singer, a dancer and a lover of sustainable fashion and costumes. <MarkerHighlightInView>And dogs.</MarkerHighlightInView>
@@ -387,7 +386,6 @@ export default function Homepage() {
               ref={refSkill}
               className={`${glitchClassSkill} swipe-reveal`}
               style={{
-                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
                 fontWeight: 900,
                 fontSize: 'clamp(1.5rem, 7vw, 8rem)',
                 color: '#FDF8F3',
@@ -427,7 +425,7 @@ export default function Homepage() {
                 <img src="/homepage/skillset_vector.png" alt="Vector Art" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <Link href="/vector-art" style={{ textDecoration: 'none' }}>
-                <div className="rgb-split-hover skillset-link" style={{ fontFamily: "'Montserrat', Arial, Helvetica, sans-serif", fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>Vector Art</div>
+                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>Vector Art</div>
               </Link>
             </div>
             <div className="skillset-row" style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', marginBottom: 0 }}>
@@ -435,7 +433,7 @@ export default function Homepage() {
                 <video src="/homepage/skillsetAnim_Cel.mp4" autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <Link href="/cel-animation" style={{ textDecoration: 'none' }}>
-                <div className="rgb-split-hover skillset-link" style={{ fontFamily: "'Montserrat', Arial, Helvetica, sans-serif", fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>Cel Animation</div>
+                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>Cel Animation</div>
               </Link>
             </div>
             <div className="skillset-row" style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', marginBottom: 0 }}>
@@ -443,7 +441,7 @@ export default function Homepage() {
                 <img src="/homepage/skillset_digipaint.png" alt="2D and 3D Illustration" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <Link href="/illustration-2d" style={{ textDecoration: 'none' }}>
-                <div className="rgb-split-hover skillset-link" style={{ fontFamily: "'Montserrat', Arial, Helvetica, sans-serif", fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>2D and 3D Illustration</div>
+                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>2D and 3D Illustration</div>
               </Link>
             </div>
           </div>
