@@ -26,9 +26,20 @@ const defaultOverlayColor = 'rgba(200, 210, 60, 0.5)';
 const breakpointColumnsObj = {
   default: 6,
   1100: 4,
-  700: 2,
-  480: 1,
+  700: 2
 };
+
+// Utility hook to detect mobile
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 700);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return isMobile;
+}
 
 const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   title,
@@ -45,6 +56,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   // Remove local openOverlay state, use props
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const [lightbox, setLightbox] = useState<{ open: boolean; src: string; type: 'image' | 'video' } | null>(null);
+  const isMobile = useIsMobile();
 
   // Optional: Snap overlay back if scrolled out of view
   useEffect(() => {
@@ -145,7 +157,16 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   }
 
   return (
-    <div className="w-full flex flex-col items-center relative px-4" style={{ minHeight: 400 }} ref={overlayRef}>
+    <div
+      className="w-full flex flex-col items-center relative px-4"
+      style={{
+        minHeight: 400,
+        width: isMobile ? '100vw' : undefined,
+        maxWidth: isMobile ? '100vw' : undefined,
+        overflowX: isMobile ? 'hidden' : undefined,
+      }}
+      ref={overlayRef}
+    >
       {lightboxModal}
       {/* Yellow dashed line at the top of the project, for visual consistency */}
       <div
@@ -195,7 +216,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
       {/* Masonry grid always visible as background */}
       <div className="w-full pt-8" style={{ position: 'relative', zIndex: 0 }}>
         <Masonry
-          breakpointCols={breakpointColumnsObj}
+          breakpointCols={isMobile ? 1 : breakpointColumnsObj}
           className="my-masonry-grid"
           columnClassName="my-masonry-grid_column"
         >
@@ -205,10 +226,10 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                 <Image
                   src={item.src}
                   alt={`${title} ${item.orientation} ${idx + 1}`}
-                  width={0}
-                  height={0}
+                  width={item.orientation === "portrait" ? 400 : 600}
+                  height={item.orientation === "portrait" ? 600 : 400}
                   style={{ width: "100%", height: "auto", cursor: "pointer" }}
-                  sizes="100vw"
+                  sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                   priority={idx < 3}
                   onClick={() => setLightbox({ open: true, src: item.src, type: 'image' })}
                 />
@@ -358,6 +379,32 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
         @media (orientation: landscape) {
           .overlay-text {
             font-size: clamp(0.7rem, 2.5vh, 1.2rem) !important;
+          }
+        }
+        @media (max-width: 700px), (orientation: portrait) {
+          .my-masonry-grid,
+          .my-masonry-grid_column,
+          .my-masonry-grid_column > div,
+          .my-masonry-grid_column[style] {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-width: 0 !important;
+            flex: 1 1 0 !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .my-masonry-grid_column {
+            display: flex !important;
+            flex-direction: column !important;
+          }
+          .my-masonry-grid_column > div {
+            display: block !important;
+          }
+          /* Remove padding from the grid's parent container on mobile */
+          .w-full.pt-20.pb-20 {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
           }
         }
       `}</style>

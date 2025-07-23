@@ -16,7 +16,6 @@ interface MasonryGalleryProps extends PropsWithChildren {
   description: string;
   items: MasonryGalleryItem[];
   overlayColor?: string;
-  topLineColor?: string;
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
@@ -45,7 +44,6 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   description,
   items,
   overlayColor = defaultOverlayColor,
-  topLineColor,
   isOpen,
   onOpen,
   onClose,
@@ -176,7 +174,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
       {/* Dashed line at the top of the project, matches overlay color */}
       <div
         style={{
-          borderTop: `4px dashed ${topLineColor || 'rgb(200,210,60)'}`,
+          borderTop: `4px dashed ${((overlayColor || defaultOverlayColor).includes('rgba') ? (overlayColor || defaultOverlayColor).replace(/rgba?\(([^,]+),([^,]+),([^,]+)(?:,[^)]+)?\)/, 'rgb($1,$2,$3)') : (overlayColor || defaultOverlayColor)).replace('0.5', '1')}`,
           width: '100%',
           margin: 0,
           padding: 0,

@@ -599,3 +599,9 @@ body {
 .my-masonry-grid_column > div {
   margin-bottom: 16px;
 }
+@media (max-width: 700px), (orientation: portrait) {
+  [class*='px-20'] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
