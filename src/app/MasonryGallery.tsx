@@ -24,6 +24,7 @@ interface MasonryGalleryProps extends PropsWithChildren {
   columns?: number;
   zoomScale?: number;
   disableAutoClose?: boolean;
+  topLineColor?: string;
 }
 
 const defaultOverlayColor = 'rgba(200, 210, 60, 0.5)';
@@ -52,6 +53,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   columns,
   zoomScale,
   disableAutoClose,
+  topLineColor,
   ...rest
 }) => {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -174,7 +176,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
       {/* Dashed line at the top of the project, matches overlay color */}
       <div
         style={{
-          borderTop: `4px dashed ${((overlayColor || defaultOverlayColor).includes('rgba') ? (overlayColor || defaultOverlayColor).replace(/rgba?\(([^,]+),([^,]+),([^,]+)(?:,[^)]+)?\)/, 'rgb($1,$2,$3)') : (overlayColor || defaultOverlayColor)).replace('0.5', '1')}`,
+          borderTop: `4px dashed ${topLineColor || 'rgb(200,210,60)'}`,
           width: '100%',
           margin: 0,
           padding: 0,
