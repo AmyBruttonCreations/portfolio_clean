@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from "react";
 import HamburgerMenu from "../HamburgerMenu";
-import Title from "../Title";
 import Caption from "../Caption";
 
 export default function Contact() {
@@ -19,9 +18,9 @@ export default function Contact() {
     <div className="min-h-screen flex flex-col items-center" style={{ background: '#E4A4BD' }}>
       <HamburgerMenu />
       <div className="w-full flex flex-col items-center justify-center pt-24">
-        <Title>
-          <span className="w-full text-center uppercase text-[6vw] md:text-[2.5vw] block">Let's tell stories together!</span>
-        </Title>
+        <h1 className="w-full text-center uppercase text-[6vw] md:text-[2.5vw] block font-bold" style={{ color: '#EF1481', textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3' }}>
+          Let's tell stories together!
+        </h1>
         <div className="mt-6 w-full max-w-xl flex flex-col items-center">
           <form onSubmit={handleSubmit} className="mt-8 w-full flex flex-col gap-4 bg-white/80 rounded-2xl shadow-lg p-8">
             <label className="font-semibold text-gray-700">Name
