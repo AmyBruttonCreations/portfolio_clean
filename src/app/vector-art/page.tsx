@@ -142,6 +142,9 @@ type VideoProjectOverlayProps = {
   software: string;
   description: string;
   overlayColor?: string;
+  isOpen?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
 };
 function VideoProjectOverlay({
   videoSrc,
@@ -150,26 +153,28 @@ function VideoProjectOverlay({
   software,
   description,
   overlayColor = defaultOverlayColor,
+  isOpen,
+  onOpen,
+  onClose,
 }: VideoProjectOverlayProps) {
-  const [openOverlay, setOpenOverlay] = useState(false);
   const overlayRef = useRef(null);
 
   // Snap overlay back if scrolled out of view
   useEffect(() => {
-    if (!openOverlay) return;
+    if (!isOpen) return;
     const ref = overlayRef.current;
     if (!ref) return;
     const observer = new window.IntersectionObserver(
       ([entry]) => {
-        if (entry.intersectionRatio < 0.5) {
-          setOpenOverlay(false);
+        if (entry.intersectionRatio < 0.5 && onClose) {
+          onClose();
         }
       },
       { threshold: 0.5 }
     );
     observer.observe(ref);
     return () => observer.disconnect();
-  }, [openOverlay]);
+  }, [isOpen, onClose]);
 
   return (
     <div className="w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center" ref={overlayRef} style={{ minHeight: 320 }}>
@@ -200,8 +205,8 @@ function VideoProjectOverlay({
           cursor: 'pointer',
           paddingLeft: '3vw',
         }}
-        aria-label={openOverlay ? 'Close overlay' : 'Open overlay'}
-        onClick={() => setOpenOverlay(o => !o)}
+        aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
+        onClick={() => (isOpen ? onClose && onClose() : onOpen && onOpen())}
       >
         <svg
           width="24"
@@ -209,15 +214,15 @@ function VideoProjectOverlay({
           viewBox="0 0 24 64"
           style={{
             display: 'block',
-            filter: openOverlay
+            filter: isOpen
               ? `drop-shadow(0 0 3px ${overlayColor}) drop-shadow(0 0 6px ${overlayColor})`
               : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
-            transform: openOverlay ? 'scaleX(-1)' : 'scaleX(1)',
+            transform: isOpen ? 'scaleX(-1)' : 'scaleX(1)',
             transition: 'filter 0.3s, transform 0.7s',
           }}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <polygon points="0,0 24,32 0,64" fill={openOverlay ? overlayColor : '#FDF8F3'} />
+          <polygon points="0,0 24,32 0,64" fill={isOpen ? overlayColor : '#FDF8F3'} />
         </svg>
       </div>
       {/* Video always visible as background */}
@@ -238,14 +243,14 @@ function VideoProjectOverlay({
           background: `linear-gradient(to left, ${(overlayColor || defaultOverlayColor).replace('0.5', '1')} 0%, ${overlayColor || defaultOverlayColor} 100%)`,
           opacity: 1,
           zIndex: 1,
-          transform: openOverlay ? 'translateX(-100%)' : 'translateX(0)',
+          transform: isOpen ? 'translateX(-100%)' : 'translateX(0)',
           transition: 'transform 0.7s ease',
           width: '100%',
           height: '100%',
         }}
         // No click handler here; arrow handles open/close
       >
-        {!openOverlay && (
+        {!isOpen && (
           <div className="w-full h-full flex flex-col justify-center" style={{
             position: 'absolute',
             right: 0,
@@ -335,7 +340,7 @@ function VideoProjectOverlay({
             </div>
           </div>
         )}
-        {openOverlay && (
+        {isOpen && (
           <div
             style={{
               position: 'absolute',
@@ -345,7 +350,7 @@ function VideoProjectOverlay({
               height: '100%',
               zIndex: 3,
             }}
-            onClick={() => setOpenOverlay(false)}
+            onClick={onClose}
           />
         )}
       </div>
@@ -667,6 +672,7 @@ export default function VectorArt() {
           onOpen={() => setOpenOverlayIndex(0)}
           onClose={() => setOpenOverlayIndex(null)}
           stacked={true}
+          zoomScale={1.1}
         />
       </div>
       <div className="w-full flex flex-col items-center">
@@ -706,6 +712,9 @@ export default function VectorArt() {
                 software={"After Effects, Illustrator"}
                 description={project.info}
                 overlayColor={defaultOverlayColor}
+                isOpen={openOverlayIndex === 1000 + idx}
+                onOpen={() => setOpenOverlayIndex(1000 + idx)}
+                onClose={() => setOpenOverlayIndex(null)}
               />
             );
           }
@@ -731,18 +740,18 @@ export default function VectorArt() {
       <div className="w-full flex flex-col items-center">
         {/* Standard MasonryGallery for second sliver gallery images */}
         {Array.isArray(projects[4]?.sliverImgs) && (
-          <MasonryGallery
-            title="VW Series (Masonry)"
-            company="Personal Work"
-            software="Illustrator"
-            description="A series of vector illustrations exploring vehicle forms."
-            items={projects[4].sliverImgs.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
+            <MasonryGallery
+              title="VW Series (Masonry)"
+              company="Personal Work"
+              software="Illustrator"
+              description="A series of vector illustrations exploring vehicle forms."
+              items={projects[4].sliverImgs.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
             overlayColor="rgba(239, 20, 129, 0.5)"
-            isOpen={openOverlayIndex === 1004}
-            onOpen={() => setOpenOverlayIndex(1004)}
-            onClose={() => setOpenOverlayIndex(null)}
-            columns={2}
-            zoomScale={1.1}
+              isOpen={openOverlayIndex === 1004}
+              onOpen={() => setOpenOverlayIndex(1004)}
+              onClose={() => setOpenOverlayIndex(null)}
+              columns={2}
+              zoomScale={1.1}
             topLineColor="rgb(239,20,129)"
           />
         )}

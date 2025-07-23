@@ -16,6 +16,9 @@ interface MasonryGalleryProps {
   items: MasonryGalleryItem[];
   overlayColor?: string;
   topLineColor?: string;
+  isOpen?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
 }
 
 const defaultOverlayColor = 'rgba(200, 210, 60, 0.5)';
@@ -23,7 +26,8 @@ const defaultOverlayColor = 'rgba(200, 210, 60, 0.5)';
 const breakpointColumnsObj = {
   default: 6,
   1100: 4,
-  700: 2
+  700: 2,
+  480: 1,
 };
 
 const MasonryGallery: React.FC<MasonryGalleryProps> = ({
@@ -34,27 +38,30 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   items,
   overlayColor = defaultOverlayColor,
   topLineColor,
+  isOpen,
+  onOpen,
+  onClose,
 }) => {
-  const [openOverlay, setOpenOverlay] = useState(false);
+  // Remove local openOverlay state, use props
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const [lightbox, setLightbox] = useState<{ open: boolean; src: string; type: 'image' | 'video' } | null>(null);
 
   // Optional: Snap overlay back if scrolled out of view
   useEffect(() => {
-    if (!openOverlay) return;
+    if (!isOpen) return;
     const ref = overlayRef.current;
     if (!ref) return;
     const observer = new window.IntersectionObserver(
       ([entry]) => {
-        if (entry.intersectionRatio < 0.5) {
-          setOpenOverlay(false);
+        if (entry.intersectionRatio < 0.5 && onClose) {
+          onClose();
         }
       },
       { threshold: 0.5 }
     );
     observer.observe(ref);
     return () => observer.disconnect();
-  }, [openOverlay]);
+  }, [isOpen, onClose]);
 
   // Lightbox modal
   const lightboxModal = lightbox && lightbox.open && (
@@ -155,7 +162,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
         }}
       />
       {/* SVG arrow for a tall, flattened triangle with cream glow, only visible when overlay is closed */}
-      {!openOverlay && (
+      {!isOpen && (
         <div
           style={{
             position: 'absolute',
@@ -169,6 +176,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
             paddingLeft: '3vw',
           }}
           aria-label="Open overlay"
+          onClick={onOpen}
         >
           <svg
             width="24"
@@ -197,10 +205,10 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                 <Image
                   src={item.src}
                   alt={`${title} ${item.orientation} ${idx + 1}`}
-                  width={item.orientation === "portrait" ? 400 : 600}
-                  height={item.orientation === "portrait" ? 600 : 400}
+                  width={0}
+                  height={0}
                   style={{ width: "100%", height: "auto", cursor: "pointer" }}
-                  sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                  sizes="100vw"
                   priority={idx < 3}
                   onClick={() => setLightbox({ open: true, src: item.src, type: 'image' })}
                 />
@@ -226,14 +234,14 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
           background: `linear-gradient(to left, ${(overlayColor || defaultOverlayColor).replace('0.5', '1')} 0%, ${overlayColor || defaultOverlayColor} 100%)`,
           opacity: 1,
           zIndex: 1,
-          transform: openOverlay ? 'translateX(calc(100% - 80px))' : 'translateX(0)',
+          transform: isOpen ? 'translateX(calc(100% - 80px))' : 'translateX(0)',
           transition: 'transform 0.7s ease',
           width: '100%',
           height: '100%',
         }}
-        onClick={() => !openOverlay && setOpenOverlay(true)}
+        onClick={() => !isOpen && onOpen && onOpen()}
       >
-        {!openOverlay && (
+        {!isOpen && (
           <div className="w-full h-full flex flex-col justify-center" style={{
             position: 'absolute',
             right: 0,
@@ -323,7 +331,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
             </div>
           </div>
         )}
-        {openOverlay && (
+        {isOpen && (
           <div
             style={{
               position: 'absolute',
@@ -333,7 +341,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
               height: '100%',
               zIndex: 3,
             }}
-            onClick={() => setOpenOverlay(false)}
+            onClick={onClose}
           />
         )}
       </div>
