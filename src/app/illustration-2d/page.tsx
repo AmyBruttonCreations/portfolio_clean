@@ -485,31 +485,26 @@ export default function VectorArt() {
         {topBanner}
       </div>
       <div className="w-full flex flex-col items-center">
-        <ProjectOverlayGallery
-          key={0}
-          title="The Golden Age of Islam"
+        <MasonryGallery
+          title="The Golden Age of Islam (Masonry)"
           company="@ Triad"
           software="Photoshop"
           description="A selection from a wide series of over 60 illustrations I created for a museum exhibit aimed at a younger audience, recounting the lives of seminal Muslim explorers between the 9th and 15th century."
-          gallery={galleryImages}
-          height="50vh"
+          items={galleryImages.map(img => ({ src: img.hd, type: 'image', orientation: 'landscape' }))}
           overlayColor={overlayColors[0]}
-          isOpen={openOverlayIndex === 0}
-          onOpen={() => setOpenOverlayIndex(0)}
+          isOpen={openOverlayIndex === 100}
+          onOpen={() => setOpenOverlayIndex(100)}
           onClose={() => setOpenOverlayIndex(null)}
         />
-        <ProjectOverlayGallery
-          key={1}
-          title="Speedpaints"
-          company="@ Personal"
-          software="Autodesk Sketchbook"
-          description="some speedpaints I made on my phone"
-          gallery={speedpaintGallery}
-          height="50vh"
+        <MasonryGallery
+          title="Speedpaint Series (Masonry)"
+          company="Personal Work"
+          software="Photoshop"
+          description="A series of digital speedpaints exploring color, light, and mood."
+          items={speedpaintGallery.map(img => ({ src: img.hd, type: 'image', orientation: 'landscape' }))}
           overlayColor={overlayColors[1]}
-          thumbAspectRatio="1/1"
-          isOpen={openOverlayIndex === 1}
-          onOpen={() => setOpenOverlayIndex(1)}
+          isOpen={openOverlayIndex === 101}
+          onOpen={() => setOpenOverlayIndex(101)}
           onClose={() => setOpenOverlayIndex(null)}
         />
         {/* Masonry Gallery for OD images */}

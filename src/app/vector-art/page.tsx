@@ -6,7 +6,7 @@ import HamburgerMenu from "../HamburgerMenu";
 import InfoBox from "../InfoBox";
 import React from "react";
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
-import StackedImagesOverlayProject from "../StackedImagesOverlayProject";
+import MasonryGallery from "../MasonryGallery";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -129,6 +129,226 @@ function InfoPill({ text }: { text: string }) {
           {text}
         </span>
       )}
+    </div>
+  );
+}
+
+// Add VideoProjectOverlay component for video overlays
+const defaultOverlayColor = 'rgba(200, 210, 60, 0.5)';
+type VideoProjectOverlayProps = {
+  videoSrc: string;
+  title: string;
+  company: string;
+  software: string;
+  description: string;
+  overlayColor?: string;
+};
+function VideoProjectOverlay({
+  videoSrc,
+  title,
+  company,
+  software,
+  description,
+  overlayColor = defaultOverlayColor,
+}: VideoProjectOverlayProps) {
+  const [openOverlay, setOpenOverlay] = useState(false);
+  const overlayRef = useRef(null);
+
+  // Snap overlay back if scrolled out of view
+  useEffect(() => {
+    if (!openOverlay) return;
+    const ref = overlayRef.current;
+    if (!ref) return;
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio < 0.5) {
+          setOpenOverlay(false);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(ref);
+    return () => observer.disconnect();
+  }, [openOverlay]);
+
+  return (
+    <div className="w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center" ref={overlayRef} style={{ minHeight: 320 }}>
+      {/* Yellow dashed line at the top */}
+      <div
+        style={{
+          borderTop: '4px dashed rgb(200,210,60)',
+          width: '100%',
+          margin: 0,
+          padding: 0,
+          boxSizing: 'border-box',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: 2,
+        }}
+      />
+      {/* SVG arrow for a tall, flattened triangle with cream glow, always visible, flips direction and color based on overlay state */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: '50%',
+          transform: 'translate(0, -50%)',
+          transition: 'transform 0.7s cubic-bezier(.68,-0.6,.32,1.6), opacity 0.7s',
+          opacity: 1,
+          zIndex: 10,
+          cursor: 'pointer',
+          paddingLeft: '3vw',
+        }}
+        aria-label={openOverlay ? 'Close overlay' : 'Open overlay'}
+        onClick={() => setOpenOverlay(o => !o)}
+      >
+        <svg
+          width="24"
+          height="64"
+          viewBox="0 0 24 64"
+          style={{
+            display: 'block',
+            filter: openOverlay
+              ? `drop-shadow(0 0 3px ${overlayColor}) drop-shadow(0 0 6px ${overlayColor})`
+              : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
+            transform: openOverlay ? 'scaleX(-1)' : 'scaleX(1)',
+            transition: 'filter 0.3s, transform 0.7s',
+          }}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <polygon points="0,0 24,32 0,64" fill={openOverlay ? overlayColor : '#FDF8F3'} />
+        </svg>
+      </div>
+      {/* Video always visible as background */}
+      <div className="w-full h-full flex items-center justify-center" style={{ position: 'relative', zIndex: 0 }}>
+        <video
+          src={videoSrc}
+          autoPlay
+          muted
+          loop
+          className="w-full h-full object-cover"
+          style={{ borderRadius: 0 }}
+        />
+      </div>
+      {/* Overlay slides fully off-screen to the left when openOverlay is true */}
+      <div
+        className="absolute top-0 left-0 w-full h-full flex items-center justify-center cursor-pointer transition-transform duration-700"
+        style={{
+          background: `linear-gradient(to left, ${(overlayColor || defaultOverlayColor).replace('0.5', '1')} 0%, ${overlayColor || defaultOverlayColor} 100%)`,
+          opacity: 1,
+          zIndex: 1,
+          transform: openOverlay ? 'translateX(-100%)' : 'translateX(0)',
+          transition: 'transform 0.7s ease',
+          width: '100%',
+          height: '100%',
+        }}
+        // No click handler here; arrow handles open/close
+      >
+        {!openOverlay && (
+          <div className="w-full h-full flex flex-col justify-center" style={{
+            position: 'absolute',
+            right: 0,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            textAlign: 'right',
+            background: 'transparent',
+            margin: 0,
+            padding: 0,
+            justifyContent: 'center',
+            zIndex: 2,
+          }}>
+            <div
+              className="overlay-text"
+              style={{
+                fontWeight: 900,
+                fontSize: 'clamp(1rem, 4vw, 2.4rem)',
+                textAlign: 'right',
+                color: '#FDF8F3',
+                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                width: '100%',
+                paddingRight: '3vw',
+                marginBottom: '0.2em',
+                letterSpacing: '0.04em',
+                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                textTransform: 'uppercase',
+              }}
+            >
+              {title}
+            </div>
+            <div
+              className="overlay-text"
+              style={{
+                fontWeight: 400,
+                fontSize: 'clamp(0.85rem, 2.5vw, 1.35rem)',
+                color: '#FDF8F3',
+                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                textTransform: 'lowercase',
+                margin: '0.5em 0',
+                textAlign: 'right',
+                width: '100%',
+                paddingRight: '3vw',
+              }}
+            >
+              {company}
+            </div>
+            <div
+              className="overlay-text"
+              style={{
+                fontWeight: 400,
+                fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
+                color: '#FDF8F3',
+                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                textTransform: 'lowercase',
+                margin: '0.5em 0',
+                textAlign: 'right',
+                width: '100%',
+                paddingRight: '3vw',
+              }}
+            >
+              {software}
+            </div>
+            <div
+              className="overlay-text"
+              style={{
+                fontWeight: 400,
+                fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
+                color: '#FDF8F3',
+                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                textTransform: 'lowercase',
+                margin: '0.5em 0',
+                textAlign: 'right',
+                width: '25%',
+                minWidth: 200,
+                maxWidth: 400,
+                paddingRight: '3vw',
+                alignSelf: 'flex-end',
+                boxSizing: 'border-box',
+              }}
+            >
+              {description}
+            </div>
+          </div>
+        )}
+        {openOverlay && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 3,
+            }}
+            onClick={() => setOpenOverlay(false)}
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -436,53 +656,62 @@ export default function VectorArt() {
             </button>
           </div>
         )}
-        <StackedImagesOverlayProject
-          title="Stacked Images Project"
+        <MasonryGallery
+          title="Stacked Images Project (Masonry)"
           company="@ Placeholder"
           software="Placeholder Software"
           description="This is a placeholder stacked images overlay project with a magenta overlay."
-          images={stackedImages}
+          items={stackedImages.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
+          overlayColor="rgba(239, 20, 129, 0.5)"
           isOpen={openOverlayIndex === 0}
           onOpen={() => setOpenOverlayIndex(0)}
           onClose={() => setOpenOverlayIndex(null)}
-          overlayColor="rgba(239, 20, 129, 0.5)"
-          onImageClick={src => setStackedLightbox({ open: true, src })}
+          stacked={true}
         />
       </div>
       <div className="w-full flex flex-col items-center">
-        {projects.map((project, idx) => {
+        {/* HYGH Series (Masonry) moved here above the video project */}
+        <MasonryGallery
+          title="HYGH Series (Masonry)"
+          company="Personal Work"
+          software="Illustrator"
+          description="A series of vector illustrations exploring stock photo transformation."
+          items={[
+            'hygh (1).png',
+            'hygh (2).png',
+            'hygh (3).png',
+            'hygh (4).png',
+            'hygh (5).png',
+            'hygh (6).png',
+            'hygh (7).png',
+          ].map(name => ({ src: `/vector-art/${name}`, type: 'image', orientation: 'landscape' }))}
+          overlayColor="rgba(133, 219, 216, 0.5)"
+          isOpen={openOverlayIndex === 4}
+          onOpen={() => setOpenOverlayIndex(4)}
+          onClose={() => setOpenOverlayIndex(null)}
+          columns={2}
+          zoomScale={1.1}
+          disableAutoClose={true}
+        />
+        {/* Video and other projects */}
+        {projects.slice(2).map((project, idx) => {
           // Video project logic
           if (project.video) {
             return (
-              <div key={idx} className="project-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
-                <div className="relative w-full flex flex-col justify-center">
-                  <video
-                    src={project.video!}
-                    autoPlay
-                    muted
-                    loop
-                    className="w-full h-full object-cover"
-                    style={{ borderRadius: 0 }}
-                  />
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                    <InfoPill text={project.info || "Project info goes here..."} />
-                  </div>
-                </div>
-              </div>
+              <VideoProjectOverlay
+                key={idx}
+                videoSrc={project.video}
+                title={project.title}
+                company={"Collab: Markus Hoffmann"}
+                software={"After Effects, Illustrator"}
+                description={project.info}
+                overlayColor={defaultOverlayColor}
+              />
             );
           }
           // Expanding sliver gallery logic
           if (project.sliverImgs) {
-            return (
-              <div key={idx} className="sliver-gallery-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
-                <div className="relative w-full flex flex-col justify-center">
-                  <ExpandingSliverGallery images={project.sliverImgs} alt={project.title} />
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                    <InfoPill text={project.info || "Project info goes here..."} />
-                  </div>
-                </div>
-              </div>
-            );
+            return null;
           }
           return (
             <div key={idx} className="project-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
@@ -493,13 +722,30 @@ export default function VectorArt() {
                   className="w-full h-full object-cover cursor-pointer transition-transform hover:scale-105"
                   style={{ borderRadius: 0 }}
                 />
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                  <InfoPill text={project.info || "Project info goes here..."} />
-                </div>
+                {/* InfoPill removed as per request */}
               </div>
             </div>
           );
         })}
+      </div>
+      <div className="w-full flex flex-col items-center">
+        {/* Standard MasonryGallery for second sliver gallery images */}
+        {Array.isArray(projects[4]?.sliverImgs) && (
+          <MasonryGallery
+            title="VW Series (Masonry)"
+            company="Personal Work"
+            software="Illustrator"
+            description="A series of vector illustrations exploring vehicle forms."
+            items={projects[4].sliverImgs.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
+            overlayColor="rgba(239, 20, 129, 0.5)"
+            isOpen={openOverlayIndex === 1004}
+            onOpen={() => setOpenOverlayIndex(1004)}
+            onClose={() => setOpenOverlayIndex(null)}
+            columns={2}
+            zoomScale={1.1}
+            topLineColor="rgb(239,20,129)"
+          />
+        )}
       </div>
       {/* Mobile notification banner */}
       {isMobile !== undefined && isMobile && orientation === 'portrait' && mobileBanner}

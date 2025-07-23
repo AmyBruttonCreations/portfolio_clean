@@ -15,6 +15,7 @@ interface MasonryGalleryProps {
   description: string;
   items: MasonryGalleryItem[];
   overlayColor?: string;
+  topLineColor?: string;
 }
 
 const defaultOverlayColor = 'rgba(200, 210, 60, 0.5)';
@@ -32,6 +33,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   description,
   items,
   overlayColor = defaultOverlayColor,
+  topLineColor,
 }) => {
   const [openOverlay, setOpenOverlay] = useState(false);
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -141,7 +143,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
       {/* Yellow dashed line at the top of the project, for visual consistency */}
       <div
         style={{
-          borderTop: '4px dashed rgb(200,210,60)',
+          borderTop: `4px dashed ${topLineColor || 'rgb(200,210,60)'}`,
           width: '100%',
           margin: 0,
           padding: 0,
