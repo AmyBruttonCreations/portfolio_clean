@@ -191,7 +191,7 @@ export default function ProjectOverlayGallery({
       {/* Gallery always visible as background */}
       <div className="w-full flex items-center justify-center overflow-hidden" style={{ position: 'relative', zIndex: 0, height: '100%' }}>
         <div
-          className="grid-gallery bg-white bg-opacity-80 transition-all duration-500"
+          className="grid-gallery project-overlay-gallery-grid bg-white bg-opacity-80 transition-all duration-500"
           style={{
             position: 'absolute',
             inset: 0,
@@ -270,6 +270,7 @@ export default function ProjectOverlayGallery({
             zIndex: 2,
           }}>
             <div
+              className="overlay-text"
               style={{
                 fontWeight: 900,
                 fontSize: 'clamp(1rem, 4vw, 2.4rem)',
@@ -288,6 +289,7 @@ export default function ProjectOverlayGallery({
               {title}
             </div>
             <div
+              className="overlay-text"
               style={{
                 fontWeight: 400,
                 fontSize: 'clamp(0.85rem, 2.5vw, 1.35rem)',
@@ -305,6 +307,7 @@ export default function ProjectOverlayGallery({
               {company}
             </div>
             <div
+              className="overlay-text"
               style={{
                 fontWeight: 400,
                 fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
@@ -322,6 +325,7 @@ export default function ProjectOverlayGallery({
               {software}
             </div>
             <div
+              className="overlay-text"
               style={{
                 fontWeight: 400,
                 fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
@@ -379,6 +383,18 @@ export default function ProjectOverlayGallery({
         @media (max-width: 600px) {
           .grid-gallery {
             grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (orientation: landscape) {
+          .overlay-text {
+            font-size: clamp(0.7rem, 2.5vh, 1.2rem) !important;
+          }
+          .project-overlay-gallery-grid {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-top: 1vw !important;
+            padding-bottom: 1vw !important;
+            row-gap: 0.15vw !important;
           }
         }
       `}</style>

@@ -134,9 +134,10 @@ const StackedImagesOverlayProject: React.FC<StackedImagesOverlayProjectProps> = 
             zIndex: 2,
           }}>
             <div
+              className="overlay-text"
               style={{
                 fontWeight: 900,
-                fontSize: '2.4rem',
+                fontSize: 'clamp(1rem, 4vw, 2.4rem)',
                 textAlign: 'right',
                 color: '#FDF8F3',
                 textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
@@ -151,9 +152,10 @@ const StackedImagesOverlayProject: React.FC<StackedImagesOverlayProjectProps> = 
               {title}
             </div>
             <div
+              className="overlay-text"
               style={{
                 fontWeight: 400,
-                fontSize: 'clamp(1rem, 1.5vw, 1.35rem)',
+                fontSize: 'clamp(0.85rem, 2.5vw, 1.35rem)',
                 color: '#FDF8F3',
                 fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
                 textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
@@ -167,9 +169,10 @@ const StackedImagesOverlayProject: React.FC<StackedImagesOverlayProjectProps> = 
               {company}
             </div>
             <div
+              className="overlay-text"
               style={{
                 fontWeight: 400,
-                fontSize: '1rem',
+                fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
                 color: '#FDF8F3',
                 fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
                 textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
@@ -183,9 +186,10 @@ const StackedImagesOverlayProject: React.FC<StackedImagesOverlayProjectProps> = 
               {software}
             </div>
             <div
+              className="overlay-text"
               style={{
                 fontWeight: 400,
-                fontSize: '1rem',
+                fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
                 color: '#FDF8F3',
                 fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
                 textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
@@ -218,6 +222,13 @@ const StackedImagesOverlayProject: React.FC<StackedImagesOverlayProjectProps> = 
           ></div>
         )}
       </div>
+      <style jsx global>{`
+        @media (orientation: landscape) {
+          .overlay-text {
+            font-size: clamp(0.7rem, 2.5vh, 1.2rem) !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -40,6 +40,16 @@ export default function ProjectShowcaseGallery({
   const [galleryHovered, setGalleryHovered] = useState<number | null>(null);
   const [lightbox, setLightbox] = useState<{ open: boolean; img: string } | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
+  const [isLandscape, setIsLandscape] = useState(false);
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      setIsLandscape(window.innerWidth > window.innerHeight);
+    };
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    return () => window.removeEventListener('resize', checkOrientation);
+  }, []);
 
   // Close overlay when scrolled out of view
   useEffect(() => {
@@ -190,14 +200,14 @@ export default function ProjectShowcaseGallery({
       {/* Gallery grid, flexible layout */}
       <div className="w-full flex items-center justify-center overflow-hidden" style={{ position: 'relative', zIndex: 0, height: '100%' }}>
         <div
-          className="showcase-gallery bg-white bg-opacity-80 transition-all duration-500"
+          className="grid-gallery project-showcase-gallery-grid bg-white bg-opacity-80 transition-all duration-500"
           style={{
             position: 'absolute',
             inset: 0,
             zIndex: 0,
             background: 'transparent',
             display: 'grid',
-            gridTemplateColumns: `repeat(${columns}, 1fr)`,
+            gridTemplateColumns: isLandscape ? 'repeat(6, 1fr)' : `repeat(${columns}, 1fr)`,
             gridAutoRows: '1fr',
             columnGap: '1vw',
             rowGap: '1vw',
@@ -222,8 +232,8 @@ export default function ProjectShowcaseGallery({
               className="object-cover cursor-pointer transition-transform duration-300"
               style={{
                 width: '100%',
-                maxWidth: maxThumbWidth,
-                maxHeight: maxThumbHeight,
+                maxWidth: isLandscape ? '80px' : 'clamp(120px, 18vw, 220px)',
+                maxHeight: isLandscape ? '80px' : 'clamp(120px, 18vw, 220px)',
                 aspectRatio: thumbAspectRatio,
                 borderRadius: 8,
                 boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
@@ -355,19 +365,36 @@ export default function ProjectShowcaseGallery({
       {lightboxModal}
       {/* Add global styles for showcase-gallery responsiveness */}
       <style jsx global>{`
-        .showcase-gallery {
+        .grid-gallery {
           display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          grid-auto-rows: 1fr;
+          column-gap: 1vw;
+          row-gap: 1vw;
           align-items: center;
           justify-items: center;
         }
         @media (max-width: 900px) {
-          .showcase-gallery {
-            grid-template-columns: repeat(2, 1fr) !important;
+          .grid-gallery {
+            grid-template-columns: repeat(2, 1fr);
           }
         }
         @media (max-width: 600px) {
-          .showcase-gallery {
-            grid-template-columns: repeat(1, 1fr) !important;
+          .grid-gallery {
+            grid-template-columns: repeat(1, 1fr);
+          }
+        }
+        @media (orientation: landscape) {
+          .project-showcase-gallery-grid {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-top: 1vw !important;
+            padding-bottom: 1vw !important;
+            row-gap: 0.15vw !important;
+          }
+          .project-showcase-gallery-grid img {
+            max-width: clamp(40px, 7vw, 80px) !important;
+            max-height: clamp(40px, 7vw, 80px) !important;
           }
         }
       `}</style>
