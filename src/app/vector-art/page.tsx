@@ -6,6 +6,7 @@ import HamburgerMenu from "../HamburgerMenu";
 import InfoBox from "../InfoBox";
 import React from "react";
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
+import StackedImagesOverlayProject from "../StackedImagesOverlayProject";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -21,12 +22,12 @@ const projects = [
   {
     title: "Pulp Fiction",
     img: "/vector-art/pulpfiction.jpg",
-    info: `I made this for my brother. He has a huge canvas print of it in his flat.\n\nI don’t mind seeing it, and that says a lot.`,
+    info: `I made this for my brother. He has a huge canvas print of it in his flat.  I don’t mind seeing it, and that says a lot.`,
   },
   {
     title: "Pet Portraits",
     img: "/vector-art/PetPortrait.png",
-    info: "Pet portrait occupying the full width.",
+    info: "Since I generally work from home, I often pet-sit for friends with non-dog friendly offices. Inevitably, those dogs become my muses. Pictured here are Tara and Sunce.",
   },
   {
     title: "Expanding Sliver Gallery",
@@ -39,12 +40,12 @@ const projects = [
       "/vector-art/hygh (6).png",
       "/vector-art/hygh (7).png"
     ],
-    info: "Expanding sliver gallery.",
+    info: "Besides cel animation, I get a lot of commissions requiring me to turn stock photos into something with more aesthetic personality. These are some examples of that.",
   },
   {
     title: "Equal Video",
     video: "/vector-art/equal.mp4",
-    info: "This is a video project.",
+    info: "This was my first collaboration with the wonderful Markus Hoffmann. We were inspired by one-line tattoos to create a series of illustrations that all fed into each other. I made all the visuals, and Markus was responsible for the animation.",
   },
   {
     title: "Second Sliver Gallery",
@@ -99,14 +100,15 @@ function InfoPill({ text }: { text: string }) {
       className={`transition-all duration-300 inline-flex items-center justify-center cursor-pointer rounded-full magenta-glow`}
       style={{
         background: '#85DBD8',
-        width: (hovered || toggled) ? 'auto' : 40,
+        width: (hovered || toggled) ? 'fit-content' : 40,
+        maxWidth: '90vw',
         minWidth: 40,
         height: 40,
         boxShadow: '0 0 6px 1.5px #EF1481, 0 0 12px 3px #EF1481',
         fontSize: 28,
         paddingLeft: (hovered || toggled) ? 16 : 0,
         paddingRight: (hovered || toggled) ? 16 : 0,
-        transition: 'all 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
+        transition: 'width 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
       }}
       onMouseEnter={() => { if (!isMobile) setHovered(true); }}
       onMouseLeave={() => { if (!isMobile) setHovered(false); }}
@@ -115,13 +117,13 @@ function InfoPill({ text }: { text: string }) {
       <span className="flex items-center justify-center w-10 h-10 font-bold" style={{ color: '#EF1481' }}>i</span>
       {(hovered || toggled) && (
         <span
-          className="ml-2 text-gray-900 dark:text-gray-100 font-medium whitespace-nowrap transition-all duration-300 opacity-100"
+          className="ml-2 text-gray-900 dark:text-gray-100 font-medium transition-all duration-300 opacity-100"
           style={{
             fontSize: '1.25rem',
-            whiteSpace: 'nowrap',
-            maxWidth: 300,
-            overflow: 'hidden',
+            whiteSpace: 'normal',
+            width: '100%',
             transition: 'all 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
+            display: 'block',
           }}
         >
           {text}
@@ -132,6 +134,8 @@ function InfoPill({ text }: { text: string }) {
 }
 
 export default function VectorArt() {
+  const [openOverlayIndex, setOpenOverlayIndex] = useState<number | null>(null);
+  const [stackedLightbox, setStackedLightbox] = useState<{ open: boolean; src: string } | null>(null);
   // Title style
   const titleStyle: React.CSSProperties = {
     color: '#FDF8F3',
@@ -301,7 +305,7 @@ export default function VectorArt() {
         >
           <h1
             ref={refTitle}
-            className={`font-bold uppercase text-[15vw] md:text-[7.5vw] w-full text-center flex items-center justify-center ${glitchClassTitle}`}
+            className={`font-bold uppercase text-[10vw] md:text-[5vw] w-full text-center flex items-center justify-center ${glitchClassTitle}`}
             style={titleStyle}
           >
             <span className="swipe-reveal" style={{ overflow: 'visible', display: 'inline' }}>&nbsp;Vector Art</span>
@@ -365,12 +369,85 @@ export default function VectorArt() {
     );
   }
 
+  const stackedImages = [
+    "/vector-art/pulpfiction.jpg",
+    "/vector-art/PetPortrait.png"
+  ];
+
+  // Lightbox for stacked images overlay
+
   return (
     <div style={{ background: '#E4A4BD' }} className="flex flex-col items-center">
       <HamburgerMenu />
       {/* Top banner */}
       <div className="w-full">
         {topBanner}
+      </div>
+      {/* New stacked images overlay project */}
+      <div className="w-full max-w-full">
+        {/* Lightbox modal for stacked images overlay */}
+        {stackedLightbox && stackedLightbox.open && (
+          <div
+            className="fixed inset-0 z-[1000] flex items-center justify-center"
+            style={{
+              cursor: 'zoom-out',
+              background: 'rgba(0,0,0,0.18)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+            }}
+            onClick={() => setStackedLightbox(null)}
+          >
+            <img
+              src={stackedLightbox.src}
+              alt="Lightbox"
+              style={{
+                maxWidth: '90vw',
+                maxHeight: '90vh',
+                objectFit: 'contain',
+                borderRadius: 12,
+                boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
+                background: '#222',
+              }}
+              onClick={e => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setStackedLightbox(null)}
+              style={{
+                position: 'fixed',
+                top: 32,
+                right: 32,
+                zIndex: 1100,
+                background: 'rgba(0,0,0,0.7)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '50%',
+                width: 48,
+                height: 48,
+                fontSize: 32,
+                fontWeight: 900,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              aria-label="Close lightbox"
+            >
+              ×
+            </button>
+          </div>
+        )}
+        <StackedImagesOverlayProject
+          title="Stacked Images Project"
+          company="@ Placeholder"
+          software="Placeholder Software"
+          description="This is a placeholder stacked images overlay project with a magenta overlay."
+          images={stackedImages}
+          isOpen={openOverlayIndex === 0}
+          onOpen={() => setOpenOverlayIndex(0)}
+          onClose={() => setOpenOverlayIndex(null)}
+          overlayColor="rgba(239, 20, 129, 0.5)"
+          onImageClick={src => setStackedLightbox({ open: true, src })}
+        />
       </div>
       <div className="w-full flex flex-col items-center">
         {projects.map((project, idx) => {
@@ -388,7 +465,7 @@ export default function VectorArt() {
                     style={{ borderRadius: 0 }}
                   />
                   <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                    <InfoPill text={`Project info goes here...`} />
+                    <InfoPill text={project.info || "Project info goes here..."} />
                   </div>
                 </div>
               </div>
@@ -401,7 +478,7 @@ export default function VectorArt() {
                 <div className="relative w-full flex flex-col justify-center">
                   <ExpandingSliverGallery images={project.sliverImgs} alt={project.title} />
                   <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                    <InfoPill text={`Project info goes here...`} />
+                    <InfoPill text={project.info || "Project info goes here..."} />
                   </div>
                 </div>
               </div>
@@ -417,7 +494,7 @@ export default function VectorArt() {
                   style={{ borderRadius: 0 }}
                 />
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                  <InfoPill text={`Project info goes here...`} />
+                  <InfoPill text={project.info || "Project info goes here..."} />
                 </div>
               </div>
             </div>

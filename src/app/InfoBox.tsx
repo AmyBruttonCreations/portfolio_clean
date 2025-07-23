@@ -1,44 +1,41 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 
-interface InfoBoxProps {
-  info?: string;
-}
-
-export default function InfoBox({ info }: InfoBoxProps) {
-  const [show, setShow] = useState(false);
-
+export default function InfoBox({ text }: { text: string }) {
+  const [hovered, setHovered] = useState(false);
+  const [toggled, setToggled] = useState(false);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
   return (
-    <div style={{ border: '4px solid lime', margin: '2rem' }}>
-      <button
-        className="bg-purple-600 text-white rounded-full flex items-center justify-center shadow-lg focus:outline-none"
-        style={{ width: 40, height: 40, fontSize: 28, border: '4px solid lime !important' }}
-        aria-label="Show project info"
-        tabIndex={0}
-        onMouseEnter={() => setShow(true)}
-        onMouseLeave={() => setShow(false)}
-        onFocus={() => setShow(true)}
-        onBlur={() => setShow(false)}
-      >
-        i
-      </button>
-      {show && (
-        <div
-          className="absolute left-1/2 bottom-0 bg-gray-900 text-white text-2xl sm:text-3xl rounded shadow-lg z-50 flex items-center justify-center"
+    <div
+      className={`transition-all duration-300 inline-flex items-center justify-center cursor-pointer rounded-full magenta-glow`}
+      style={{
+        background: '#85DBD8',
+        width: (hovered || toggled) ? 'auto' : 40,
+        minWidth: 40,
+        height: 40,
+        boxShadow: '0 0 6px 1.5px #EF1481, 0 0 12px 3px #EF1481',
+        fontSize: 28,
+        paddingLeft: (hovered || toggled) ? 16 : 0,
+        paddingRight: (hovered || toggled) ? 16 : 0,
+        transition: 'width 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
+      }}
+      onMouseEnter={() => { if (!isMobile) setHovered(true); }}
+      onMouseLeave={() => { if (!isMobile) setHovered(false); }}
+      onClick={() => { if (isMobile) setToggled(t => !t); }}
+    >
+      <span className="flex items-center justify-center w-10 h-10 font-bold" style={{ color: '#EF1481' }}>i</span>
+      {(hovered || toggled) && (
+        <span
+          className="ml-2 text-gray-900 dark:text-gray-100 font-medium transition-all duration-300 opacity-100"
           style={{
-            height: '3.5rem', // h-14
-            width: '90vw',
-            minWidth: '300px',
-            maxWidth: '1100px',
-            transform: 'translateX(-50%)',
-            boxSizing: 'border-box',
-            whiteSpace: 'normal',
-            wordBreak: 'break-word',
-            padding: '0 2rem',
+            fontSize: '1.25rem',
+            whiteSpace: 'nowrap',
+            transition: 'all 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
+            display: 'block',
           }}
         >
-          {info}
-        </div>
+          {text}
+        </span>
       )}
     </div>
   );

@@ -110,37 +110,37 @@ export default function Homepage() {
             }
           }
         `}</style>
-        <div ref={refHero} style={{ width: '100%' }}>
-          <h1
-            className={glitchClassHero}
-            style={{
-              color: '#fff',
-              fontSize: 'clamp(2.2rem, 8vw, 12rem)',
-              fontWeight: 900,
-              textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
-              textAlign: 'center',
-              letterSpacing: '0.04em',
-              borderRadius: '1rem',
-              padding: '0.5em 1.5em',
-              position: 'relative',
-              zIndex: 3,
-              fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
-              textTransform: 'uppercase',
-              width: '100%',
-              maxWidth: '100vw',
-              overflow: 'visible',
-              margin: 0,
-              boxSizing: 'border-box',
-            }}
-          >
-            <span className="swipe-reveal" style={{ overflow: 'visible', display: 'block' }}>
-              &nbsp;Amy Brutton
-            </span>
-            <span className="swipe-reveal" style={{ overflow: 'visible', display: 'block' }}>
-              Creations
-            </span>
-          </h1>
-        </div>
+            <div ref={refHero} style={{ width: '100%' }}>
+              <h1
+                className={glitchClassHero}
+                style={{
+                  color: '#fff',
+                  fontSize: 'clamp(2.2rem, 8vw, 12rem)',
+                  fontWeight: 900,
+                  textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                  textAlign: 'center',
+                  letterSpacing: '0.04em',
+                  borderRadius: '1rem',
+                  padding: '0.5em 1.5em',
+                  position: 'relative',
+                  zIndex: 3,
+                  fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                  textTransform: 'uppercase',
+                  width: '100%',
+                  maxWidth: '100vw',
+                  overflow: 'visible',
+                  margin: 0,
+                  boxSizing: 'border-box',
+                }}
+              >
+                <span className="swipe-reveal" style={{ overflow: 'visible', display: 'block' }}>
+                  &nbsp;Amy Brutton
+                </span>
+                <span className="swipe-reveal" style={{ overflow: 'visible', display: 'block' }}>
+                  Creations
+                </span>
+              </h1>
+            </div>
       </section>
 
       {/* Section 2: About - My Name is Amy Rose box */}
@@ -239,27 +239,27 @@ export default function Homepage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
               {/* My Name is Amy Rose with in-view glitch+swipe */}
-              <div
-                className="about-title"
-                style={{
-                  fontWeight: 900,
-                  fontSize: 'clamp(2.2rem, 5vw, 4rem)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                  color: '#FDF8F3',
-                  lineHeight: 1.1,
-                  margin: 0,
-                  padding: 0,
-                  textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
-                }}
-              >
-                <span ref={ref1} className={`${glitchClass1} swipe-reveal`} style={{ overflow: 'visible', display: 'block' }}>
-                  &nbsp;My Name is
-                </span>
-                <span ref={ref2} className={`${glitchClass2} swipe-reveal`} style={{ overflow: 'visible', display: 'block' }}>
-                  &nbsp;Amy Rose
-                </span>
-              </div>
+                  <div
+                    className="about-title"
+                    style={{
+                      fontWeight: 900,
+                      fontSize: 'clamp(2.2rem, 5vw, 4rem)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      color: '#FDF8F3',
+                      lineHeight: 1.1,
+                      margin: 0,
+                      padding: 0,
+                      textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                    }}
+                  >
+                    <span ref={ref1} className={`${glitchClass1} swipe-reveal`} style={{ overflow: 'visible', display: 'block' }}>
+                      &nbsp;My Name is
+                    </span>
+                    <span ref={ref2} className={`${glitchClass2} swipe-reveal`} style={{ overflow: 'visible', display: 'block' }}>
+                      &nbsp;Amy Rose
+                    </span>
+                  </div>
               <div className="about-caption" style={{ fontWeight: 900, fontSize: '1.25rem', color: '#EF1481', marginTop: '0.5rem', textTransform: 'none', letterSpacing: '0.01em' }}>
                 and I like to tell stories with pictures
               </div>
@@ -382,25 +382,25 @@ export default function Homepage() {
             zIndex: 2,
           }}>
             {/* SKILLSET with in-view glitch+swipe */}
-            <span
-              ref={refSkill}
-              className={`${glitchClassSkill} swipe-reveal`}
-              style={{
-                fontWeight: 900,
-                fontSize: 'clamp(1.5rem, 7vw, 8rem)',
-                color: '#FDF8F3',
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                display: 'inline-block',
-                overflow: 'visible',
-                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
-                lineHeight: 1.1,
-                width: '100%',
-              }}
-            >
-              SKILLSET
-            </span>
+                <span
+                  ref={refSkill}
+                  className={`${glitchClassSkill} swipe-reveal`}
+                  style={{
+                    fontWeight: 900,
+                    fontSize: 'clamp(1.5rem, 7vw, 8rem)',
+                    color: '#FDF8F3',
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                    textAlign: 'center',
+                    display: 'inline-block',
+                    overflow: 'visible',
+                    textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                    lineHeight: 1.1,
+                    width: '100%',
+                  }}
+                >
+                  SKILLSET
+                </span>
           </div>
           {/* Main skillset menu box */}
           <div className="skillset-menu" style={{
