@@ -2,18 +2,8 @@ import React, { useState, useRef, useEffect, PropsWithChildren } from "react";
 import ReactDOM from "react-dom";
 import Masonry from "react-masonry-css";
 import Image from "next/image";
-
-// Helper to detect mobile devices
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  return isMobile;
-}
+import { useIsMobile } from '../utils/useIsMobile';
+import LightboxModal from '../components/LightboxModal';
 
 export interface MasonryGalleryItem {
   src: string;
@@ -21,6 +11,11 @@ export interface MasonryGalleryItem {
   orientation: "portrait" | "landscape";
 }
 
+/**
+ * Props for MasonryGallery
+ *
+ * stacked: If true, uses a single-column stacked layout instead of a masonry grid. Only affects layout.
+ */
 interface MasonryGalleryProps extends PropsWithChildren {
   title: string;
   company: string;
@@ -76,11 +71,9 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   const galleryContainerRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
 
-  // Optional: Snap overlay back if scrolled out of view
+  // Auto-close overlay if scrolled out of view (unless disableAutoClose is true)
   useEffect(() => {
-    console.log(`[MasonryGallery] useEffect observer (${title})`, { stacked, disableAutoClose, isOpen });
     if (Boolean(disableAutoClose)) {
-      console.log(`[MasonryGallery] Observer skipped due to disableAutoClose (${title})`, { disableAutoClose });
       return;
     }
     if (!isOpen) return;
@@ -95,9 +88,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
     }
     const observer = new window.IntersectionObserver(
       ([entry]) => {
-        console.log(`[MasonryGallery] IntersectionObserver entry (${title})`, { intersectionRatio: entry.intersectionRatio });
         if (entry.intersectionRatio < threshold) {
-          console.log(`[MasonryGallery] Auto-closing overlay due to intersectionRatio < threshold (${title})`);
           onClose();
         }
       },
@@ -106,84 +97,17 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
     observer.observe(ref);
     return () => observer.disconnect();
     // Always include all dependencies, but do not change the array length
-  }, [isOpen, onClose, stacked, disableAutoClose]);
+  }, [isOpen, onClose, disableAutoClose]);
 
   // Lightbox modal
-  const lightboxModal = lightbox && lightbox.open && (
-    <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center"
-      style={{
-        cursor: 'zoom-out',
-        background: 'rgba(0,0,0,0.18)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        width: '100vw',
-        height: '100vh',
-        overflow: 'auto',
-      }}
-      onClick={() => setLightbox(null)}
-    >
-      {lightbox.type === 'image' ? (
-        <img
-          src={lightbox.src}
-          alt="Lightbox"
-          style={{
-            display: 'block',
-            margin: 'auto',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            objectFit: 'contain',
-            borderRadius: 12,
-            boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
-            background: '#222',
-          }}
-          onClick={e => e.stopPropagation()}
-        />
-      ) : (
-        <video
-          src={lightbox.src}
-          autoPlay
-          loop
-          muted
-          playsInline
-          controls
-          style={{
-            display: 'block',
-            margin: 'auto',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            borderRadius: 12,
-            background: '#000',
-            boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
-          }}
-          onClick={e => e.stopPropagation()}
-        />
-      )}
-      <button
-        onClick={() => setLightbox(null)}
-        style={{
-          position: 'fixed',
-          top: 32,
-          right: 32,
-          zIndex: 1100,
-          background: 'rgba(0,0,0,0.7)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '50%',
-          width: 48,
-          height: 48,
-          fontSize: 32,
-          fontWeight: 900,
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        aria-label="Close lightbox"
-      >
-        ×
-      </button>
-    </div>
+  const lightboxModal = (
+    <LightboxModal
+      open={!!lightbox?.open}
+      src={lightbox?.src || ''}
+      type={lightbox?.type || 'image'}
+      onClose={() => setLightbox(null)}
+      alt="Lightbox"
+    />
   );
 
   // Alternate portrait and landscape for balance
@@ -231,6 +155,9 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
       />
       {/* Masonry grid always visible as background */}
       <div className="w-full pt-20 pb-20" style={{ position: 'relative', zIndex: 0, paddingLeft: 80, paddingRight: 80 }} ref={galleryContainerRef}>
+        {/*
+          stacked: If true, use a single-column stacked layout. Only affects layout.
+        */}
         {stacked ? (
           <div className="flex flex-col gap-8 w-full">
             {items.map((item, idx) => (
@@ -244,6 +171,15 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                   overflow: "hidden",
                   cursor: "pointer",
                   transition: "transform 0.3s",
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Open ${item.type === 'image' ? 'image' : 'video'} in lightbox`}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setLightbox({ open: true, src: item.src, type: item.type });
+                  }
                 }}
                 onMouseEnter={e => {
                   if (!isMobile && !lightbox?.open) {
@@ -305,6 +241,15 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                     position: "relative",
                     zIndex: 1,
                     transform: "scale(1)",
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Open ${item.type === 'image' ? 'image' : 'video'} in lightbox`}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setLightbox({ open: true, src: item.src, type: item.type });
+                    }
                   }}
                   onMouseEnter={e => {
                     if (!isMobile && !lightbox?.open) {
@@ -487,27 +432,19 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
       </div>
       {!lightbox?.open && (
         <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            height: '100%',
-            width: '10%',
-            minWidth: 48,
-            maxWidth: 96,
-            zIndex: 1000,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            transition: 'opacity 0.7s',
-            opacity: 1,
-            background: 'transparent',
-          }}
+          className="overlay-arrow-area"
           aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
+          tabIndex={0}
+          role="button"
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              isOpen ? onClose() : onOpen();
+            }
+          }}
           onClick={() => isOpen ? onClose() : onOpen()}
         >
-          <div style={{ marginLeft: 24, width: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="overlay-arrow-area__icon">
             <svg
               className={!isOpen ? 'bouncy-arrow' : ''}
               width="24"

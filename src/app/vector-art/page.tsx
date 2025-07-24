@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import HamburgerMenu from "../HamburgerMenu";
 import InfoBox from "../InfoBox";
 import React from "react";
+import { useIsMobile } from '../../utils/useIsMobile';
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
 import MasonryGallery from "../MasonryGallery";
 
@@ -57,17 +58,6 @@ const projects = [
     info: "Second expanding sliver gallery.",
   },
 ];
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState<undefined | boolean>(undefined);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  return isMobile;
-}
 
 // Expanding sliver gallery component
 function ExpandingSliverGallery({ images, alt }: { images: string[]; alt: string }) {
@@ -376,7 +366,6 @@ function VideoProjectOverlay({
 
 export default function VectorArt() {
   const [openOverlayIndex, setOpenOverlayIndex] = useState<number | null>(null);
-  const [stackedLightbox, setStackedLightbox] = useState<{ open: boolean; src: string } | null>(null);
   // Title style
   const titleStyle: React.CSSProperties = {
     color: '#FDF8F3',
@@ -415,8 +404,6 @@ export default function VectorArt() {
   }, [showBanner]);
 
   const isMobile = useIsMobile();
-  const [lightbox, setLightbox] = useState<{ open: boolean; img: string } | null>(null);
-  const [showInfo, setShowInfo] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [iconBounced, setIconBounced] = useState(false);
   const [linkBounce, setLinkBounce] = useState(false);
@@ -615,11 +602,6 @@ export default function VectorArt() {
     "/vector-art/PetPortrait.png"
   ];
 
-  // Lightbox for stacked images overlay
-
-  // Debug: log stacked prop for MasonryGallery
-  console.log('[VectorArt] MasonryGallery stacked prop:', true);
-
   return (
     <div style={{ background: '#E4A4BD' }} className="flex flex-col items-center">
       <HamburgerMenu />
@@ -629,57 +611,6 @@ export default function VectorArt() {
       </div>
       {/* New stacked images overlay project */}
       <div className="w-full max-w-full">
-        {/* Lightbox modal for stacked images overlay */}
-        {stackedLightbox && stackedLightbox.open && (
-          <div
-            className="fixed inset-0 z-[1000] flex items-center justify-center"
-            style={{
-              cursor: 'zoom-out',
-              background: 'rgba(0,0,0,0.18)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-            }}
-            onClick={() => setStackedLightbox(null)}
-          >
-            <img
-              src={stackedLightbox.src}
-              alt="Lightbox"
-              style={{
-                maxWidth: '90vw',
-                maxHeight: '90vh',
-                objectFit: 'contain',
-                borderRadius: 12,
-                boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
-                background: '#222',
-              }}
-              onClick={e => e.stopPropagation()}
-            />
-            <button
-              onClick={() => setStackedLightbox(null)}
-              style={{
-                position: 'fixed',
-                top: 32,
-                right: 32,
-                zIndex: 1100,
-                background: 'rgba(0,0,0,0.7)',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '50%',
-                width: 48,
-                height: 48,
-                fontSize: 32,
-                fontWeight: 900,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              aria-label="Close lightbox"
-            >
-              ×
-            </button>
-          </div>
-        )}
         <MasonryGallery
           title="Stacked Images Project (Masonry)"
           company="@ Placeholder"

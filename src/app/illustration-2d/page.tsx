@@ -5,9 +5,12 @@ import { useCallback } from "react";
 import HamburgerMenu from "../HamburgerMenu";
 import InfoBox from "../InfoBox";
 import React from "react";
+import { useIsMobile } from '../../utils/useIsMobile';
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
 import ProjectOverlayGallery from '../ProjectOverlayGallery';
 import MasonryGallery, { MasonryGalleryItem } from "../MasonryGallery";
+import LightboxModal from '../../components/LightboxModal';
+import MobileBanner from '../../components/MobileBanner';
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -36,17 +39,6 @@ const overlayColors = [
   'rgba(133, 219, 216, 0.5)', // blue
   'rgba(200, 210, 60, 0.5)', // darker yellow
 ];
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState<undefined | boolean>(undefined);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  return isMobile;
-}
 
 // Expanding sliver gallery component
 function ExpandingSliverGallery({ images, alt, onImageClick }: { images: string[]; alt: string, onImageClick?: (img: string) => void }) {
@@ -251,38 +243,9 @@ export default function VectorArt() {
 
   // Dismissible mobile notification
   const mobileBanner = (
-    <div
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-8 py-4 rounded-2xl shadow-lg flex items-center gap-3 font-bold text-base"
-      style={{
-        background: '#EF1481',
-        color: '#FDF8F3',
-        fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
-        boxShadow: '0 0 16px 4px #EF1481, 0 0 32px 8px #fff',
-        letterSpacing: '0.02em',
-        minWidth: 0,
-        maxWidth: '90vw',
-        display: showMobileBanner ? 'flex' : 'none',
-      }}
-    >
-      <span>Pssst - all of this looks so much better in landscape. Feel free to rotate your phone or give it a spin on your laptop &lt;3 !</span>
-      <button
-        className="ml-2 flex items-center justify-center w-8 h-8 rounded-full"
-        style={{
-          background: '#FDF8F3',
-          color: '#EF1481',
-          border: 'none',
-          boxShadow: '0 0 8px 2px #EF1481',
-          cursor: 'pointer',
-          fontWeight: 900,
-          fontSize: 22,
-          padding: 0,
-        }}
-        onClick={() => setShowMobileBanner(false)}
-        aria-label="Dismiss notification"
-      >
-        ×
-      </button>
-    </div>
+    <MobileBanner open={showMobileBanner} onClose={() => setShowMobileBanner(false)}>
+      Pssst - all of this looks so much better in landscape. Feel free to rotate your phone or give it a spin on your laptop &lt;3 !
+    </MobileBanner>
   );
 
   // Add in-view animation for Vector Art title
@@ -374,56 +337,14 @@ export default function VectorArt() {
     );
   }
 
-  // Lightbox modal
-  const lightboxModal = lightbox && lightbox.open && (
-    <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center"
-      style={{
-        cursor: 'zoom-out',
-        background: 'rgba(0,0,0,0.18)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-      }}
-      onClick={() => setLightbox(null)}
-    >
-      <img
-        src={lightbox.img}
-        alt="Lightbox"
-        style={{
-          maxWidth: '90vw',
-          maxHeight: '90vh',
-          objectFit: 'contain',
-          borderRadius: 12,
-          boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
-          background: '#222',
-        }}
-        onClick={e => e.stopPropagation()}
-      />
-      <button
-        onClick={() => setLightbox(null)}
-        style={{
-          position: 'fixed',
-          top: 32,
-          right: 32,
-          zIndex: 1100,
-          background: 'rgba(0,0,0,0.7)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '50%',
-          width: 48,
-          height: 48,
-          fontSize: 32,
-          fontWeight: 900,
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        aria-label="Close lightbox"
-      >
-        ×
-      </button>
-    </div>
+  const lightboxModal = (
+    <LightboxModal
+      open={!!lightbox?.open}
+      src={lightbox?.img || ''}
+      type="image"
+      onClose={() => setLightbox(null)}
+      alt="Lightbox"
+    />
   );
 
   const speedpaintGallery = [

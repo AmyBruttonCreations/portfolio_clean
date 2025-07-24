@@ -605,3 +605,118 @@ body {
     padding-right: 0 !important;
   }
 }
+
+/* Mobile Banner Styles */
+.mobile-banner {
+  background: #EF1481;
+  color: #FDF8F3;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  box-shadow: 0 0 16px 4px #EF1481, 0 0 32px 8px #fff;
+  letter-spacing: 0.02em;
+  min-width: 0;
+  max-width: 90vw;
+  display: flex;
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  padding: 2rem 2rem;
+  border-radius: 2rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.mobile-banner__close {
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #FDF8F3;
+  color: #EF1481;
+  border: none;
+  box-shadow: 0 0 8px 2px #EF1481;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 1.375rem;
+  padding: 0;
+}
+
+/* Lightbox Modal Styles */
+.lightbox-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  background: rgba(0,0,0,0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+}
+.lightbox-modal__img,
+.lightbox-modal__video {
+  display: block;
+  margin: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+  background: #222;
+}
+.lightbox-modal__video {
+  background: #000;
+}
+.lightbox-modal__close {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1100;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  font-size: 2rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Overlay Arrow Area */
+.overlay-arrow-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 10%;
+  min-width: 48px;
+  max-width: 96px;
+  z-index: 1000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: opacity 0.7s;
+  opacity: 1;
+  background: transparent;
+}
+.overlay-arrow-area__icon {
+  margin-left: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
