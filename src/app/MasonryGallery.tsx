@@ -3,6 +3,18 @@ import ReactDOM from "react-dom";
 import Masonry from "react-masonry-css";
 import Image from "next/image";
 
+// Helper to detect mobile devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 export interface MasonryGalleryItem {
   src: string;
   type: "image" | "video";
@@ -48,11 +60,11 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   isOpen,
   onOpen,
   onClose,
-  stacked,
+  stacked = false,
   height,
   columns,
   zoomScale,
-  disableAutoClose,
+  disableAutoClose = false,
   topLineColor,
   ...rest
 }) => {
@@ -62,20 +74,34 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   const [zoomedIdx, setZoomedIdx] = useState<number | null>(null);
   const [zoomedRect, setZoomedRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
   const galleryContainerRef = useRef<HTMLDivElement | null>(null);
+  const isMobile = useIsMobile();
 
   // Optional: Snap overlay back if scrolled out of view
   useEffect(() => {
-    if (stacked || disableAutoClose) return;
+    console.log(`[MasonryGallery] useEffect observer (${title})`, { stacked, disableAutoClose, isOpen });
+    if (Boolean(disableAutoClose)) {
+      console.log(`[MasonryGallery] Observer skipped due to disableAutoClose (${title})`, { disableAutoClose });
+      return;
+    }
     if (!isOpen) return;
     const ref = overlayRef.current;
     if (!ref) return;
+    // Dynamic threshold: lower if overlay is tall or on mobile
+    let threshold = 0.5;
+    const overlayHeight = ref.getBoundingClientRect().height;
+    const viewportHeight = window.innerHeight;
+    if (overlayHeight > viewportHeight * 0.95 || window.innerWidth <= 768) {
+      threshold = 0.1;
+    }
     const observer = new window.IntersectionObserver(
       ([entry]) => {
-        if (entry.intersectionRatio < 0.5) {
+        console.log(`[MasonryGallery] IntersectionObserver entry (${title})`, { intersectionRatio: entry.intersectionRatio });
+        if (entry.intersectionRatio < threshold) {
+          console.log(`[MasonryGallery] Auto-closing overlay due to intersectionRatio < threshold (${title})`);
           onClose();
         }
       },
-      { threshold: 0.5 }
+      { threshold }
     );
     observer.observe(ref);
     return () => observer.disconnect();
@@ -170,13 +196,29 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
     if (portraits[i]) balancedItems.push(portraits[i]);
   }
 
+  // Helper to get solid color from overlayColor
+  function getSolidColor(color: string) {
+    // If rgba, convert to rgb
+    const rgbaMatch = color.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+    if (rgbaMatch) {
+      const [_, r, g, b] = rgbaMatch;
+      return `rgb(${r},${g},${b})`;
+    }
+    // If already rgb, return as is
+    const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (rgbMatch) return color;
+    // Fallback to default
+    return 'rgb(200,210,60)';
+  }
+  const solidLineColor = topLineColor || getSolidColor(overlayColor);
+
   return (
     <div className="w-full flex flex-col items-center relative pt-20 pb-20 px-20" style={{ minHeight: 400, height: height || undefined }} ref={overlayRef}>
       {lightboxModal}
       {/* Dashed line at the top of the project, matches overlay color */}
       <div
         style={{
-          borderTop: `4px dashed ${topLineColor || 'rgb(200,210,60)'}`,
+          borderTop: `4px dashed ${solidLineColor}`,
           width: '100%',
           margin: 0,
           padding: 0,
@@ -204,11 +246,13 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                   transition: "transform 0.3s",
                 }}
                 onMouseEnter={e => {
-                  const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-                  setZoomedRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
-                  setZoomedIdx(idx);
+                  if (!isMobile && !lightbox?.open) {
+                    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                    setZoomedRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+                    setZoomedIdx(idx);
+                  }
                 }}
-                onMouseLeave={() => setZoomedIdx(null)}
+                onMouseLeave={() => { if (!isMobile) setZoomedIdx(null); }}
               >
                 {item.type === "image" ? (
                   <Image
@@ -263,11 +307,13 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                     transform: "scale(1)",
                   }}
                   onMouseEnter={e => {
-                    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-                    setZoomedRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
-                    setZoomedIdx(idx);
+                    if (!isMobile && !lightbox?.open) {
+                      const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                      setZoomedRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+                      setZoomedIdx(idx);
+                    }
                   }}
-                  onMouseLeave={() => setZoomedIdx(null)}
+                  onMouseLeave={() => { if (!isMobile) setZoomedIdx(null); }}
                 >
                   {item.type === "image" ? (
                     <Image
@@ -297,7 +343,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
           </Masonry>
         )}
         {/* Portal for zoomed image */}
-        {typeof window !== 'undefined' && zoomedIdx !== null && zoomedRect && ReactDOM.createPortal(
+        {typeof window !== 'undefined' && !isMobile && !lightbox?.open && zoomedIdx !== null && zoomedRect && ReactDOM.createPortal(
           <div
             style={{
               position: 'fixed',
@@ -334,39 +380,6 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
           </div>,
           document.body
         )}
-      </div>
-      {/* SVG arrow for a tall, flattened triangle with cream glow, only visible when overlay is closed or open */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 24,
-          top: '50%',
-          transform: 'translate(0, -50%)',
-          transition: 'opacity 0.7s',
-          opacity: 1,
-          zIndex: 1000,
-          cursor: 'pointer',
-        }}
-        aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
-        onClick={() => isOpen ? onClose() : onOpen()}
-      >
-        <svg
-          className={!isOpen ? 'bouncy-arrow' : ''}
-          width="24"
-          height="64"
-          viewBox="0 0 24 64"
-          style={{
-            display: 'block',
-            filter: isOpen
-              ? `drop-shadow(0 0 3px ${(overlayColor || defaultOverlayColor).replace(/, 0\.5\)/, ', 1)')}) drop-shadow(0 0 6px ${(overlayColor || defaultOverlayColor).replace(/, 0\.5\)/, ', 1)')})`
-              : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
-            transform: isOpen ? 'scaleX(-1)' : 'none', // Flip arrow when open
-            transition: 'transform 0.3s',
-          }}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <polygon points="0,0 24,32 0,64" fill={isOpen ? (overlayColor || defaultOverlayColor).replace(/, 0\.5\)/, ', 1)') : '#FDF8F3'} />
-        </svg>
       </div>
       {/* Overlay slides out to the right */}
       <div
@@ -472,6 +485,49 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
           </div>
         )}
       </div>
+      {!lightbox?.open && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            height: '100%',
+            width: '10%',
+            minWidth: 48,
+            maxWidth: 96,
+            zIndex: 1000,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            transition: 'opacity 0.7s',
+            opacity: 1,
+            background: 'transparent',
+          }}
+          aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
+          onClick={() => isOpen ? onClose() : onOpen()}
+        >
+          <div style={{ marginLeft: 24, width: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg
+              className={!isOpen ? 'bouncy-arrow' : ''}
+              width="24"
+              height="64"
+              viewBox="0 0 24 64"
+              style={{
+                display: 'block',
+                filter: isOpen
+                  ? `drop-shadow(0 0 3px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')}) drop-shadow(0 0 6px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')})`
+                  : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
+                transform: isOpen ? 'scaleX(-1)' : 'none', // Flip arrow when open
+                transition: 'transform 0.3s',
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <polygon points="0,0 24,32 0,64" fill={isOpen ? (overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)') : '#FDF8F3'} />
+            </svg>
+          </div>
+        </div>
+      )}
       <style jsx global>{`
         .my-masonry-grid {
           display: flex;

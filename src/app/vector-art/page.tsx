@@ -159,6 +159,22 @@ function VideoProjectOverlay({
 }: VideoProjectOverlayProps) {
   const overlayRef = useRef(null);
 
+  // Helper to get solid color from overlayColor
+  function getSolidColor(color: string) {
+    // If rgba, convert to rgb
+    const rgbaMatch = color.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+    if (rgbaMatch) {
+      const [_, r, g, b] = rgbaMatch;
+      return `rgb(${r},${g},${b})`;
+    }
+    // If already rgb, return as is
+    const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (rgbMatch) return color;
+    // Fallback to default
+    return 'rgb(200,210,60)';
+  }
+  const solidLineColor = getSolidColor(overlayColor);
+
   // Snap overlay back if scrolled out of view
   useEffect(() => {
     if (!isOpen) return;
@@ -178,10 +194,10 @@ function VideoProjectOverlay({
 
   return (
     <div className="w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center" ref={overlayRef} style={{ minHeight: 320 }}>
-      {/* Yellow dashed line at the top */}
+      {/* Dashed line at the top, now matches overlay color */}
       <div
         style={{
-          borderTop: '4px dashed rgb(200,210,60)',
+          borderTop: `4px dashed ${solidLineColor}`,
           width: '100%',
           margin: 0,
           padding: 0,
@@ -601,6 +617,9 @@ export default function VectorArt() {
 
   // Lightbox for stacked images overlay
 
+  // Debug: log stacked prop for MasonryGallery
+  console.log('[VectorArt] MasonryGallery stacked prop:', true);
+
   return (
     <div style={{ background: '#E4A4BD' }} className="flex flex-col items-center">
       <HamburgerMenu />
@@ -697,7 +716,6 @@ export default function VectorArt() {
           onClose={() => setOpenOverlayIndex(null)}
           columns={2}
           zoomScale={1.1}
-          disableAutoClose={true}
         />
         {/* Video and other projects */}
         {projects.slice(2).map((project, idx) => {
