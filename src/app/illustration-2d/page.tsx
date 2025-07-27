@@ -352,10 +352,10 @@ export default function VectorArt() {
     { thumb: '/2D-3D-illustration/thumbs/speedpaint (2).jpg', hd: '/2D-3D-illustration/speedpaint (2).png' },
     { thumb: '/2D-3D-illustration/thumbs/speedpaint (3).jpg', hd: '/2D-3D-illustration/speedpaint (3).png' },
     { thumb: '/2D-3D-illustration/thumbs/speedpaint (4).jpg', hd: '/2D-3D-illustration/speedpaint (4).png' },
-    { thumb: '/2D-3D-illustration/thumbs/speedpaint (1).jpg', hd: '/2D-3D-illustration/speedpaint (1).png' },
-    { thumb: '/2D-3D-illustration/thumbs/speedpaint (2).jpg', hd: '/2D-3D-illustration/speedpaint (2).png' },
-    { thumb: '/2D-3D-illustration/thumbs/speedpaint (3).jpg', hd: '/2D-3D-illustration/speedpaint (3).png' },
-    { thumb: '/2D-3D-illustration/thumbs/speedpaint (4).jpg', hd: '/2D-3D-illustration/speedpaint (4).png' },
+    { thumb: '/2D-3D-illustration/billy.jpg', hd: '/2D-3D-illustration/billy.jpg' },
+    { thumb: '/2D-3D-illustration/valeria.jpg', hd: '/2D-3D-illustration/valeria.jpg' },
+    { thumb: '/2D-3D-illustration/milly.jpg', hd: '/2D-3D-illustration/milly.jpg' },
+    { thumb: '/2D-3D-illustration/tiffany.jpg?v=2', hd: '/2D-3D-illustration/tiffany.jpg?v=2' },
   ];
 
   const odysseyGallery = [
@@ -407,7 +407,7 @@ export default function VectorArt() {
       </div>
       <div className="w-full flex flex-col items-center">
         <MasonryGallery
-          title="The Golden Age of Islam (Masonry)"
+          title="The Golden Age of Islam"
           company="@ Triad"
           software="Photoshop"
           description="A selection from a wide series of over 60 illustrations I created for a museum exhibit aimed at a younger audience, recounting the lives of seminal Muslim explorers between the 9th and 15th century."
@@ -418,10 +418,10 @@ export default function VectorArt() {
           onClose={() => setOpenOverlayIndex(null)}
         />
         <MasonryGallery
-          title="Speedpaint Series (Masonry)"
-          company="Personal Work"
-          software="Photoshop"
-          description="A series of digital speedpaints exploring color, light, and mood."
+          title="Speedpaint Series"
+          company="@ personal work"
+          software="autodesk sketchbook for android"
+          description="these were made on my phone. i resisted the pull of a smartphone until i discovered the galaxy note series, and realised there were phones you could draw on. here are some i am especially fond of."
           items={speedpaintGallery.map(img => ({ src: img.hd, type: 'image', orientation: 'landscape' }))}
           overlayColor={overlayColors[1]}
           isOpen={openOverlayIndex === 101}
@@ -444,7 +444,7 @@ export default function VectorArt() {
         <div className="w-full max-w-full">
           <MasonryGallery
             title="Analog Work"
-            company="@ personal"
+            company="@ personal work"
             software="pencil, ballpoint, fine liner and watercolour"
             description={"I also do analog things. I’ll draw with anything that leaves a mark - pictured here: some watercolour, some oil painting, some pencil, some marker, and something I made with a ballpoint pen."}
             items={analogItems}

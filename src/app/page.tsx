@@ -223,7 +223,7 @@ export default function Homepage() {
             maxWidth: 900,
             minWidth: 320,
             minHeight: 320,
-            marginLeft: 'auto',
+            marginLeft: '2rem',
             marginRight: 'auto',
             padding: '2.5rem',
             display: 'flex',
@@ -300,7 +300,7 @@ export default function Homepage() {
         }}
       >
         <style jsx>{`
-          @media (max-width: 900px) {
+          @media (max-width: 900px), (max-aspect-ratio: 1/1) {
             .skillset-section {
               flex-direction: column !important;
               align-items: center !important;
@@ -425,7 +425,7 @@ export default function Homepage() {
                 <img src="/homepage/skillset_vector.png" alt="Vector Art" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <Link href="/vector-art" style={{ textDecoration: 'none' }}>
-                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>Vector Art</div>
+                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'url("/cursors/finger.png"), pointer', transition: 'color 0.2s' }}>Vector Art</div>
               </Link>
             </div>
             <div className="skillset-row" style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', marginBottom: 0 }}>
@@ -433,7 +433,7 @@ export default function Homepage() {
                 <video src="/homepage/skillsetAnim_Cel.mp4" autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <Link href="/cel-animation" style={{ textDecoration: 'none' }}>
-                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>Cel Animation</div>
+                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'url("/cursors/finger.png"), pointer', transition: 'color 0.2s' }}>Cel Animation</div>
               </Link>
             </div>
             <div className="skillset-row" style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', marginBottom: 0 }}>
@@ -441,7 +441,7 @@ export default function Homepage() {
                 <img src="/homepage/skillset_digipaint.png" alt="2D and 3D Illustration" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <Link href="/illustration-2d" style={{ textDecoration: 'none' }}>
-                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'color 0.2s' }}>2D and 3D Illustration</div>
+                <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'url("/cursors/finger.png"), pointer', transition: 'color 0.2s' }}>2D and 3D Illustration</div>
               </Link>
             </div>
           </div>

@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from "react";
+import emailjs from '@emailjs/browser';
 import HamburgerMenu from "../HamburgerMenu";
 import Caption from "../Caption";
 
@@ -12,7 +13,28 @@ export default function Contact() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    // Here you would send the form data to your backend or email service
+    
+    // EmailJS configuration
+    const templateParams = {
+      from_name: form.name,
+      from_email: form.email,
+      message: form.message,
+      to_email: 'bonjour@amybruttoncreations.com', // Your business email
+    };
+
+    emailjs.send(
+      'service_cvgegwy', // Your EmailJS service ID
+      'template_3p3d0ja', // Your EmailJS template ID
+      templateParams,
+      'oW69YeANIu7GV6XoA' // Your EmailJS public key
+    )
+    .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
+    })
+    .catch((err) => {
+      console.log('FAILED...', err);
+      setSubmitted(false); // Reset form if email fails
+    });
   };
   return (
     <div
@@ -101,7 +123,7 @@ export default function Contact() {
             </button>
           </form>
           <a
-            href="mailto:your@email.com"
+            href="mailto:bonjour@amybruttoncreations.com"
             className="mt-8 px-6 py-2 rounded-full transition font-bold text-lg shadow-lg"
             style={{
               background: '#FDF8F3',

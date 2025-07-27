@@ -8,6 +8,7 @@ import React from "react";
 import { useIsMobile } from '../../utils/useIsMobile';
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
 import MasonryGallery from "../MasonryGallery";
+import PixelArtSprite from "../../components/PixelArtSprite";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -575,7 +576,7 @@ export default function VectorArt() {
         style={{ minWidth: 0, minHeight: 0, position: 'relative', zIndex: 2 }}
       >
         <video
-          src="/cel-animation/SkillsetAnim_Cel.mp4"
+          src="/cel-animation/JOPLYN/converted/SkillsetAnim_Cel.mp4"
           className="object-cover w-full h-full"
           style={{
             borderRadius: 0,
@@ -635,19 +636,60 @@ export default function VectorArt() {
   ];
 
   return (
-    <div style={{ background: '#E4A4BD' }} className="flex flex-col items-center">
+    <div style={{ background: '#E4A4BD', position: 'relative', minHeight: '100vh' }} className="flex flex-col items-center">
       <HamburgerMenu />
       {/* Top banner */}
       <div className="w-full">
+        <div style={{position: 'relative', width: '100%', height: '100%'}}>
+          <PixelArtSprite
+            basePath="/cel-animation/sprites/retimed/SPACECOW_Master_"
+            frameCount={606}
+            idleEnd={605}
+            runStart={0}
+            runEnd={605}
+            trigger={false}
+            style={{
+              position: 'absolute',
+              top: '75%',
+              left: '90%',
+              width: 'min(220px, 22vw)',
+              zIndex: 1, // behind the banner image
+              pointerEvents: 'none',
+              transform: 'scale(8) translateX(-100%)',
+            }}
+          />
+          <div style={{ position: 'relative', zIndex: 2 }}>
         {topBanner}
+          </div>
+        </div>
       </div>
       {/* New stacked images overlay project */}
-      <div className="w-full max-w-full">
+      <div className="w-full max-w-full" style={{position: 'relative', minHeight: '400px'}}>
+        {/* BAMBI sprite at the top left, mirrored, 400% scale, only on landscape, runs when overlay is opened */}
+        {orientation === 'landscape' && (
+          <PixelArtSprite
+            basePath="/cel-animation/sprites/retimed/BAMBI_"
+            frameCount={107}
+            idleEnd={60}
+            runStart={61}
+            runEnd={106}
+            trigger={openOverlayIndex === 0}
+            style={{
+              transform: 'scaleX(-4) scaleY(4)',
+              position: 'absolute',
+              top: 0,
+              left: '0.5vw',
+              width: 'clamp(120px, 18vw, 240px)',
+              zIndex: 20,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
         <MasonryGallery
-          title="Cel Animation Project"
-          company="Your Company"
-          software="Your Software"
-          description="Project description here."
+          title="JOPLYN"
+          company="@ None of the Above"
+          software="Toon Boom Harmony"
+          description="a series of 14 animations and visuals I made for JOPLYN's album Stains. Since we were short on time, I limited the longer animations to 4FPS. Sometimes I feel the urge to go in and smooth them out, but I still feel it holds up pretty well."
           items={celAnimationGalleryItems}
           overlayColor="rgba(239, 20, 129, 0.5)"
           isOpen={openOverlayIndex === 0}
@@ -659,10 +701,10 @@ export default function VectorArt() {
       <div className="w-full flex flex-col items-center">
         {/* HYGH Series (Masonry) moved here above the video project */}
         <MasonryGallery
-          title="corporate design"
-          company="@ HYGH ag"
-          software="adobe illustrator"
-          description="Besides cel animation, I get a lot of commissions requiring me to turn stock photos into something with more aesthetic personality. These are some examples of that."
+          title="June's Journey - Catch the Cat"
+          company="@ Wooga x CCCB"
+          software="toon boom harmony"
+          description="late last year I collaborated with cbbb , wolfspack and wooga to create a promotional video for the much-loved June's journey, featuring a live action background and character, and an animated cat. the goal was to capture the aesthetic of June's Journey in a cel-animation style, integrating it seamlessly with live-action backgrounds while delivering high-quality results quickly."
           items={[
             { src: "/cel-animation/WOOGA/Makingof0001.png", type: "image", orientation: "landscape" },
             { src: "/cel-animation/WOOGA/Makingof0002.png", type: "image", orientation: "landscape" },
@@ -676,46 +718,90 @@ export default function VectorArt() {
           columns={2}
           zoomScale={1.1}
         />
-        <MasonryGallery
-          title="GEBERIT KATALYST"
-          company="GEBERIT"
-          software="Adobe After Effects"
-          description="Animation project for GEBERIT showcasing creative visual storytelling and brand communication."
-          items={[
-            { src: "/cel-animation/GEBERIT_KATALYST/converted/Mountaineer.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/Mountaineer.mov", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/GEBERIT_KATALYST/converted/8aY7k4GvsYw_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/8aY7k4GvsYw_576.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/GEBERIT_KATALYST/converted/EJnj8GHKj_C_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/EJnj8GHKj_C_576.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/GEBERIT_KATALYST/converted/UzMuRZqFubT_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/UzMuRZqFubT_576.mp4", type: "video", orientation: "landscape" },
-          ]}
-          overlayColor="rgba(200, 210, 60, 0.5)"
-          isOpen={openOverlayIndex === 104}
-          onOpen={() => setOpenOverlayIndex(104)}
-          onClose={() => setOpenOverlayIndex(null)}
-          columns={2}
-          zoomScale={1.1}
-        />
-        <MasonryGallery
-          title="corporate design"
-          company="@ HYGH ag"
-          software="adobe illustrator"
-          description="Besides cel animation, I get a lot of commissions requiring me to turn stock photos into something with more aesthetic personality. These are some examples of that."
-          items={[
-            { src: "/cel-animation/S&E/converted/Episode01.mp4", hdSrc: "/cel-animation/S&E/Episode01.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/S&E/converted/Episode02.mp4", hdSrc: "/cel-animation/S&E/Episode02.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/S&E/converted/nextup.mp4", hdSrc: "/cel-animation/S&E/nextup.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/S&E/converted/gif02.mp4", hdSrc: "/cel-animation/S&E/gif02.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/S&E/converted/gif04.mp4", hdSrc: "/cel-animation/S&E/gif04.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/S&E/converted/gif01.mp4", hdSrc: "/cel-animation/S&E/gif01.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/S&E/converted/gif03.mp4", hdSrc: "/cel-animation/S&E/gif03.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/S&E/converted/woolyAnimationTest.mp4", hdSrc: "/cel-animation/S&E/woolyAnimationTest.mov", type: "video", orientation: "landscape" },
-          ]}
-          overlayColor="rgba(239, 20, 129, 0.5)"
-          isOpen={openOverlayIndex === 204}
-          onOpen={() => setOpenOverlayIndex(204)}
-          onClose={() => setOpenOverlayIndex(null)}
-          columns={2}
-          zoomScale={1.1}
-        />
+        <div style={{ position: 'relative', width: '100%' }}>
+          {/* Raccoon sprite at the top left, mirrored, 600% scale, only on landscape, runs when overlay is opened */}
+          {orientation === 'landscape' && (
+                        <PixelArtSprite
+              basePath="/cel-animation/sprites/retimed/RACCOON_"
+              frameCount={129}
+              idleEnd={0}
+              runStart={0}
+              runEnd={128}
+              trigger={openOverlayIndex === 104}
+              style={{
+                transform: 'scaleX(-12) scaleY(12)',
+                position: 'absolute',
+                top: '170px',
+                left: 'calc(2vw + 30px)',
+                width: 'clamp(120px, 18vw, 240px)',
+                zIndex: 20,
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+          <MasonryGallery
+            title="geberit"
+            company="@ katalyst"
+            software="toon boom harmony"
+            description="this was my first experience creating cel animation as an overlay for live action footage, and i loved the challenge of creating something smooth enough not to be jarring, whilst still embracing the hand-drawn quality of the medium."
+            items={[
+              { src: "/cel-animation/GEBERIT_KATALYST/converted/Mountaineer.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/Mountaineer.mov", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/GEBERIT_KATALYST/converted/8aY7k4GvsYw_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/8aY7k4GvsYw_576.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/GEBERIT_KATALYST/converted/EJnj8GHKj_C_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/EJnj8GHKj_C_576.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/GEBERIT_KATALYST/converted/UzMuRZqFubT_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/UzMuRZqFubT_576.mp4", type: "video", orientation: "landscape" },
+            ]}
+            overlayColor="rgba(200, 210, 60, 0.5)"
+            isOpen={openOverlayIndex === 104}
+            onOpen={() => setOpenOverlayIndex(104)}
+            onClose={() => setOpenOverlayIndex(null)}
+            columns={2}
+            zoomScale={1.1}
+          />
+        </div>
+        <div style={{ position: 'relative', width: '100%' }}>
+          {/* Cockerel sprite at the top left, mirrored, 400% scale, only on landscape, runs when overlay is opened */}
+          {orientation === 'landscape' && (
+            <PixelArtSprite
+              basePath="/cel-animation/sprites/retimed/COCKEREL_"
+              frameCount={130}
+              idleEnd={0}
+              runStart={0}
+              runEnd={129}
+              trigger={openOverlayIndex === 204}
+              style={{
+                transform: 'scaleX(-4) scaleY(4)',
+                position: 'absolute',
+                top: '130px',
+                left: 'calc(2vw - 120px)',
+                width: 'clamp(120px, 18vw, 240px)',
+                zIndex: 20,
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+          <MasonryGallery
+            title="ortovox"
+            company="@ storz&escherich"
+            software="toon boom harmony"
+            description="an ad campaign I created for ski clothing company Ortovox, centered around the adventures of their mascot - a sheep who goes on a fitness journey."
+            items={[
+              { src: "/cel-animation/S&E/converted/Episode01.mp4", hdSrc: "/cel-animation/S&E/Episode01.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/S&E/converted/Episode02.mp4", hdSrc: "/cel-animation/S&E/Episode02.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/S&E/converted/nextup.mp4", hdSrc: "/cel-animation/S&E/nextup.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/S&E/converted/gif02.mp4", hdSrc: "/cel-animation/S&E/gif02.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/S&E/converted/gif04.mp4", hdSrc: "/cel-animation/S&E/gif04.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/S&E/converted/gif01.mp4", hdSrc: "/cel-animation/S&E/gif01.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/S&E/converted/gif03.mp4", hdSrc: "/cel-animation/S&E/gif03.mp4", type: "video", orientation: "landscape" },
+              { src: "/cel-animation/S&E/converted/woolyAnimationTest.mp4", hdSrc: "/cel-animation/S&E/woolyAnimationTest.mov", type: "video", orientation: "landscape" },
+            ]}
+            overlayColor="rgba(239, 20, 129, 0.5)"
+            isOpen={openOverlayIndex === 204}
+            onOpen={() => setOpenOverlayIndex(204)}
+            onClose={() => setOpenOverlayIndex(null)}
+            columns={2}
+            zoomScale={1.1}
+          />
+        </div>
         {/* Video and other projects */}
         {projects.slice(2).map((project, idx) => {
           // Video project logic
@@ -754,32 +840,14 @@ export default function VectorArt() {
           );
         })}
       </div>
-      <div className="w-full flex flex-col items-center">
-        {/* Standard MasonryGallery for second sliver gallery images */}
-        {Array.isArray(projects[4]?.sliverImgs) && (
-            <MasonryGallery
-              title="VW Pitch"
-              company="Storz&Escherich"
-              software="Adobe Illustrator"
-              description="a pitch I did for VW that I'm still quite fond of. "
-              items={projects[4].sliverImgs.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
-              overlayColor="rgba(239, 20, 129, 0.5)"
-              isOpen={openOverlayIndex === 1004}
-              onOpen={() => setOpenOverlayIndex(1004)}
-              onClose={() => setOpenOverlayIndex(null)}
-              columns={2}
-              zoomScale={1.1}
-            topLineColor="rgb(239,20,129)"
-          />
-        )}
-      </div>
+
       <div className="w-full flex flex-col items-center">
         {/* New project with blue overlay */}
         <MasonryGallery
-          title="908 Project"
-          company="908"
-          software="Adobe After Effects"
-          description="Animation project showcasing creative storytelling and visual effects."
+          title="ROCHE"
+          company="@ 908"
+          software="toon boom harmony"
+          description="some of the first things I ever did in cel animation  - along with the pixel animals you may have noticed bouncing around the page. Most old work doesn't hold up - but I quite like these"
           items={[
             { src: "/cel-animation/908/converted/Roche _ Mut macht Originale - Christoph Kolumbus (1080p with 24fps).mp4", hdSrc: "/cel-animation/908/Roche _ Mut macht Originale - Christoph Kolumbus (1080p with 24fps).mp4", type: "video", orientation: "landscape" },
             { src: "/cel-animation/908/converted/Roche _ Mut macht Originale - Thomas Edison (1080p with 24fps).mp4", hdSrc: "/cel-animation/908/Roche _ Mut macht Originale - Thomas Edison (1080p with 24fps).mp4", type: "video", orientation: "landscape" },

@@ -19,11 +19,8 @@
   }
 }
 
-body {
-  cursor: url('/cursor.png') 0 0, auto !important;
-  background: #E4A4BD;
-  color: var(--foreground);
-  font-weight: bold;
+body, html {
+  cursor: url('/cursors/arrow.png') 0 0, auto;
 }
 @keyframes bounce-in {
   0% {
@@ -145,7 +142,6 @@ body {
 /* Yellow glow for contact icon */
 .yellow-glow {
   box-shadow: 0 0 24px 8px #FFDC64, 0 0 48px 16px #FFDC64;
-  border: 2px solid red; /* DEBUG: Remove after confirming visibility */
 }
 
 /* Caption animation classes for vector art page */
@@ -669,4 +665,35 @@ body {
 .project-overlay-gallery video {
   box-shadow: none !important;
   filter: none !important;
+}
+
+/* Custom cursors */
+.cursor-arrow {
+  cursor: url('/cursors/arrow.png') 0 0, auto;
+}
+.cursor-finger {
+  cursor: url('/cursors/finger.png') 0 0, pointer;
+}
+.cursor-magnifyingglass {
+  cursor: url('/cursors/magnifyingglass.png') 0 0, zoom-in;
+}
+
+a, button, [role="button"], .cursor-finger, .pointer {
+  cursor: url('/cursors/finger.png') 0 0, pointer;
+}
+
+img:hover, .masonry-gallery-item img:hover, .zoom-on-hover:hover, .hover\:cursor-pointer:hover, .project-container img:hover, .project-container video:hover {
+  box-shadow: none !important;
+}
+
+.lightbox-modal, .zoom-in, .cursor-magnifyingglass, .zoom-cursor, .zoomable-image, .zoom-in-cursor, .lightbox-image, .lightbox-content, .zoom-in:hover {
+  cursor: url('/cursors/magnifyingglass.png') 0 0, zoom-in !important;
+}
+
+img[src*="JOP_Sticker_LARGE-01.png"],
+img[src*="JOP_Sticker_LARGE-01.png"]:hover,
+.masonry-gallery-item img[src*="JOP_Sticker_LARGE-01.png"]:hover,
+.project-container img[src*="JOP_Sticker_LARGE-01.png"]:hover {
+  box-shadow: none !important;
+  background: transparent !important;
 }

@@ -4,6 +4,7 @@ import Masonry from "react-masonry-css";
 import Image from "next/image";
 import { useIsMobile } from '../utils/useIsMobile';
 import LightboxModal from '../components/LightboxModal';
+import PixelArtSprite from '../components/PixelArtSprite';
 
 export interface MasonryGalleryItem {
   src: string;
@@ -386,6 +387,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
           height: '100%',
         }}
       >
+        {/* Raccoon sprite removed for fresh start */}
         {!isOpen && (
           <div className="w-full h-full flex flex-col justify-center" style={{
             position: 'absolute',
