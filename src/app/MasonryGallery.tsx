@@ -7,6 +7,7 @@ import LightboxModal from '../components/LightboxModal';
 
 export interface MasonryGalleryItem {
   src: string;
+  hdSrc?: string;
   type: "image" | "video";
   orientation: "portrait" | "landscape";
 }
@@ -136,6 +137,18 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   }
   const solidLineColor = topLineColor || getSolidColor(overlayColor);
 
+  useEffect(() => {
+    if (zoomedIdx === null) return;
+    // Add scroll handler to close zoomed image
+    const handleScroll = () => {
+      setZoomedIdx(null);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [zoomedIdx]);
+
   return (
     <div className="w-full flex flex-col items-center relative pt-20 pb-20 px-20" style={{ minHeight: 400, height: height || undefined }} ref={overlayRef}>
       {lightboxModal}
@@ -178,7 +191,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                 onKeyDown={e => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    setLightbox({ open: true, src: item.src, type: item.type });
+                    setLightbox({ open: true, src: item.hdSrc || item.src, type: item.type });
                   }
                 }}
                 onMouseEnter={e => {
@@ -199,17 +212,33 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                     style={{ width: "100%", height: "auto", cursor: "pointer" }}
                     sizes="100vw"
                     priority={idx < 3}
-                    onClick={() => setLightbox({ open: true, src: item.src, type: 'image' })}
+                    onClick={() => setLightbox({ open: true, src: item.hdSrc || item.src, type: 'image' })}
                   />
                 ) : (
                   <video
                     src={item.src}
-                    autoPlay
                     loop
                     muted
                     playsInline
                     style={{ width: "100%", height: "auto", background: "#000", cursor: "pointer" }}
                     onClick={() => setLightbox({ open: true, src: item.src, type: 'video' })}
+                    ref={(el) => {
+                      if (el) {
+                        const observer = new IntersectionObserver(
+                          (entries) => {
+                            entries.forEach((entry) => {
+                              if (entry.isIntersecting) {
+                                el.play();
+                              } else {
+                                el.pause();
+                              }
+                            });
+                          },
+                          { threshold: 0.1 }
+                        );
+                        observer.observe(el);
+                      }
+                    }}
                   />
                 )}
               </div>
@@ -226,9 +255,9 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
               const commonStyle = {
                 width: "100%",
                 marginBottom: "16px",
-                background: "#fff",
+                background: "transparent",
                 borderRadius: 8,
-                boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+                boxShadow: "none",
                 overflow: "hidden",
                 cursor: "pointer",
                 transition: "transform 0.3s",
@@ -241,6 +270,8 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                     position: "relative",
                     zIndex: 1,
                     transform: "scale(1)",
+                    // Remove box-shadow for the sticker image
+                    ...(item.src.includes('JOP_Sticker_LARGE-01.png') ? { boxShadow: 'none' } : {}),
                   }}
                   tabIndex={0}
                   role="button"
@@ -248,7 +279,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                   onKeyDown={e => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      setLightbox({ open: true, src: item.src, type: item.type });
+                      setLightbox({ open: true, src: item.hdSrc || item.src, type: item.type });
                     }
                   }}
                   onMouseEnter={e => {
@@ -269,17 +300,33 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                       style={{ width: "100%", height: "auto", cursor: "pointer" }}
                       sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                       priority={idx < 3}
-                      onClick={() => setLightbox({ open: true, src: item.src, type: 'image' })}
+                      onClick={() => setLightbox({ open: true, src: item.hdSrc || item.src, type: 'image' })}
                     />
                   ) : (
                     <video
                       src={item.src}
-                      autoPlay
                       loop
                       muted
                       playsInline
                       style={{ width: "100%", height: "auto", background: "#000", cursor: "pointer" }}
                       onClick={() => setLightbox({ open: true, src: item.src, type: 'video' })}
+                      ref={(el) => {
+                        if (el) {
+                          const observer = new IntersectionObserver(
+                            (entries) => {
+                              entries.forEach((entry) => {
+                                if (entry.isIntersecting) {
+                                  el.play();
+                                } else {
+                                  el.pause();
+                                }
+                              });
+                            },
+                            { threshold: 0.1 }
+                          );
+                          observer.observe(el);
+                        }
+                      }}
                     />
                   )}
                 </div>
@@ -431,39 +478,145 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
         )}
       </div>
       {!lightbox?.open && (
-        <div
-          className="overlay-arrow-area"
-          aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
-          tabIndex={0}
-          role="button"
-          onKeyDown={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              isOpen ? onClose() : onOpen();
-            }
-          }}
-          onClick={() => isOpen ? onClose() : onOpen()}
-        >
-          <div className="overlay-arrow-area__icon">
-            <svg
-              className={!isOpen ? 'bouncy-arrow' : ''}
-              width="24"
-              height="64"
-              viewBox="0 0 24 64"
-              style={{
-                display: 'block',
-                filter: isOpen
-                  ? `drop-shadow(0 0 3px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')}) drop-shadow(0 0 6px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')})`
-                  : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
-                transform: isOpen ? 'scaleX(-1)' : 'none', // Flip arrow when open
-                transition: 'transform 0.3s',
-              }}
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <polygon points="0,0 24,32 0,64" fill={isOpen ? (overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)') : '#FDF8F3'} />
-            </svg>
+        <>
+          {/* Top arrow */}
+          <div
+            className="overlay-arrow-area"
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              height: '33%',
+              width: '10%',
+              minWidth: 48,
+              maxWidth: 96,
+              zIndex: 1000,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              transition: 'opacity 0.7s',
+              opacity: 1,
+              background: 'transparent',
+            }}
+            aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
+            tabIndex={0}
+            role="button"
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                isOpen ? onClose() : onOpen();
+              }
+            }}
+            onClick={() => isOpen ? onClose() : onOpen()}
+          >
+            <div className="overlay-arrow-area__icon">
+              <svg
+                className={!isOpen ? 'bouncy-arrow' : ''}
+                width="24"
+                height="64"
+                viewBox="0 0 24 64"
+                style={{
+                  display: 'block',
+                  filter: isOpen
+                    ? `drop-shadow(0 0 3px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')}) drop-shadow(0 0 6px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')})`
+                    : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
+                  transform: isOpen ? 'scaleX(-1)' : 'none',
+                  transition: 'transform 0.3s',
+                }}
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polygon points="0,0 24,32 0,64" fill={isOpen ? (overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)') : '#FDF8F3'} />
+              </svg>
+            </div>
           </div>
-        </div>
+          {/* Middle arrow (original) */}
+          <div
+            className="overlay-arrow-area"
+            aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
+            tabIndex={0}
+            role="button"
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                isOpen ? onClose() : onOpen();
+              }
+            }}
+            onClick={() => isOpen ? onClose() : onOpen()}
+          >
+            <div className="overlay-arrow-area__icon">
+              <svg
+                className={!isOpen ? 'bouncy-arrow' : ''}
+                width="24"
+                height="64"
+                viewBox="0 0 24 64"
+                style={{
+                  display: 'block',
+                  filter: isOpen
+                    ? `drop-shadow(0 0 3px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')}) drop-shadow(0 0 6px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')})`
+                    : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
+                  transform: isOpen ? 'scaleX(-1)' : 'none',
+                  transition: 'transform 0.3s',
+                }}
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polygon points="0,0 24,32 0,64" fill={isOpen ? (overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)') : '#FDF8F3'} />
+              </svg>
+            </div>
+          </div>
+          {/* Bottom arrow */}
+          <div
+            className="overlay-arrow-area"
+            style={{
+              position: 'absolute',
+              left: 0,
+              bottom: 0,
+              top: 'auto',
+              height: '33%',
+              width: '10%',
+              minWidth: 48,
+              maxWidth: 96,
+              zIndex: 1000,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              transition: 'opacity 0.7s',
+              opacity: 1,
+              background: 'transparent',
+            }}
+            aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
+            tabIndex={0}
+            role="button"
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                isOpen ? onClose() : onOpen();
+              }
+            }}
+            onClick={() => isOpen ? onClose() : onOpen()}
+          >
+            <div className="overlay-arrow-area__icon">
+              <svg
+                className={!isOpen ? 'bouncy-arrow' : ''}
+                width="24"
+                height="64"
+                viewBox="0 0 24 64"
+                style={{
+                  display: 'block',
+                  filter: isOpen
+                    ? `drop-shadow(0 0 3px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')}) drop-shadow(0 0 6px ${(overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)')})`
+                    : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
+                  transform: isOpen ? 'scaleX(-1)' : 'none',
+                  transition: 'transform 0.3s',
+                }}
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polygon points="0,0 24,32 0,64" fill={isOpen ? (overlayColor || defaultOverlayColor).replace(/, 0.5\)/, ', 1)') : '#FDF8F3'} />
+              </svg>
+            </div>
+          </div>
+        </>
       )}
       <style jsx global>{`
         .my-masonry-grid {

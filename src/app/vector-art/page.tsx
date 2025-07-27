@@ -203,33 +203,42 @@ function VideoProjectOverlay({
         style={{
           position: 'absolute',
           left: 0,
-          top: '50%',
-          transform: 'translate(0, -50%)',
-          transition: 'transform 0.7s cubic-bezier(.68,-0.6,.32,1.6), opacity 0.7s',
-          opacity: 1,
-          zIndex: 10,
+          top: 0,
+          height: '100%',
+          width: '10%',
+          minWidth: 48,
+          maxWidth: 96,
+          zIndex: 1000,
           cursor: 'pointer',
-          paddingLeft: '3vw',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          transition: 'opacity 0.7s',
+          opacity: 1,
+          background: 'transparent',
         }}
         aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
         onClick={() => (isOpen ? onClose && onClose() : onOpen && onOpen())}
       >
-        <svg
-          width="24"
-          height="64"
-          viewBox="0 0 24 64"
-          style={{
-            display: 'block',
-            filter: isOpen
-              ? `drop-shadow(0 0 3px ${overlayColor}) drop-shadow(0 0 6px ${overlayColor})`
-              : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
-            transform: isOpen ? 'scaleX(-1)' : 'scaleX(1)',
-            transition: 'filter 0.3s, transform 0.7s',
-          }}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <polygon points="0,0 24,32 0,64" fill={isOpen ? overlayColor : '#FDF8F3'} />
-        </svg>
+        <div style={{ marginLeft: 24, width: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg
+            className={!isOpen ? 'bouncy-arrow' : ''}
+            width="24"
+            height="64"
+            viewBox="0 0 24 64"
+            style={{
+              display: 'block',
+              filter: isOpen
+                ? `drop-shadow(0 0 3px ${overlayColor}) drop-shadow(0 0 6px ${overlayColor})`
+                : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
+              transform: isOpen ? 'scaleX(-1)' : 'scaleX(1)',
+              transition: 'filter 0.3s, transform 0.7s',
+            }}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <polygon points="0,0 24,32 0,64" fill={isOpen ? overlayColor : '#FDF8F3'} />
+          </svg>
+        </div>
       </div>
       {/* Video always visible as background */}
       <div className="w-full h-full flex items-center justify-center" style={{ position: 'relative', zIndex: 0 }}>
@@ -612,10 +621,10 @@ export default function VectorArt() {
       {/* New stacked images overlay project */}
       <div className="w-full max-w-full">
         <MasonryGallery
-          title="Stacked Images Project (Masonry)"
-          company="@ Placeholder"
-          software="Placeholder Software"
-          description="This is a placeholder stacked images overlay project with a magenta overlay."
+          title="Commissions"
+          company="@ personal"
+          software="Adobe Illustrator"
+          description="I love pushing the boundaries of detailing in vector art - the challenge of capturing lights with shapes reminds me of digital impressionism. Also: endlessly scalable. "
           items={stackedImages.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
           overlayColor="rgba(239, 20, 129, 0.5)"
           isOpen={openOverlayIndex === 0}
@@ -628,10 +637,10 @@ export default function VectorArt() {
       <div className="w-full flex flex-col items-center">
         {/* HYGH Series (Masonry) moved here above the video project */}
         <MasonryGallery
-          title="HYGH Series (Masonry)"
-          company="Personal Work"
-          software="Illustrator"
-          description="A series of vector illustrations exploring stock photo transformation."
+          title="corporate design"
+          company="@ HYGH ag"
+          software="adobe illustrator"
+          description="Besides cel animation, I get a lot of commissions requiring me to turn stock photos into something with more aesthetic personality. These are some examples of that."
           items={[
             'hygh (1).png',
             'hygh (2).png',
@@ -656,9 +665,9 @@ export default function VectorArt() {
               <VideoProjectOverlay
                 key={idx}
                 videoSrc={project.video}
-                title={project.title}
-                company={"Collab: Markus Hoffmann"}
-                software={"After Effects, Illustrator"}
+                title={idx === 1 ? "EQUAL // last night in Paris" : project.title}
+                company={idx === 1 ? "Storz&Escherich" : "Collab: Markus Hoffmann"}
+                software={idx === 1 ? "Adobe Illustrator + After Effects" : "After Effects, Illustrator"}
                 description={project.info}
                 overlayColor={defaultOverlayColor}
                 isOpen={openOverlayIndex === 1000 + idx}
@@ -690,12 +699,12 @@ export default function VectorArt() {
         {/* Standard MasonryGallery for second sliver gallery images */}
         {Array.isArray(projects[4]?.sliverImgs) && (
             <MasonryGallery
-              title="VW Series (Masonry)"
-              company="Personal Work"
-              software="Illustrator"
-              description="A series of vector illustrations exploring vehicle forms."
+              title="VW Pitch"
+              company="Storz&Escherich"
+              software="Adobe Illustrator"
+              description="a pitch I did for VW that I'm still quite fond of. "
               items={projects[4].sliverImgs.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
-            overlayColor="rgba(239, 20, 129, 0.5)"
+              overlayColor="rgba(239, 20, 129, 0.5)"
               isOpen={openOverlayIndex === 1004}
               onOpen={() => setOpenOverlayIndex(1004)}
               onClose={() => setOpenOverlayIndex(null)}
@@ -707,6 +716,17 @@ export default function VectorArt() {
       </div>
       {/* Mobile notification banner */}
       {isMobile !== undefined && isMobile && orientation === 'portrait' && mobileBanner}
+      {/* Add bouncy-arrow animation keyframes if not already present */}
+      <style jsx global>{`
+        @keyframes arrow-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.25); }
+        }
+        .bouncy-arrow {
+          animation: arrow-pulse 1s cubic-bezier(.68,-0.6,.32,1.6) infinite;
+          animation-delay: 2s;
+        }
+      `}</style>
     </div>
   );
 } 

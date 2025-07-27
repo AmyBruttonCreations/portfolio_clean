@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 
 interface LightboxModalProps {
   open: boolean;
@@ -22,11 +23,19 @@ const LightboxModal: React.FC<LightboxModalProps> = ({ open, src, type, onClose,
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    // Add scroll handler to close on scroll
+    const handleScroll = () => {
+      onClose();
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [open, onClose]);
 
   if (!open) return null;
-  return (
+  const modalContent = (
     <div className="lightbox-modal" onClick={onClose}>
       {type === 'image' ? (
         <img
@@ -57,6 +66,7 @@ const LightboxModal: React.FC<LightboxModalProps> = ({ open, src, type, onClose,
       </button>
     </div>
   );
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default LightboxModal; 

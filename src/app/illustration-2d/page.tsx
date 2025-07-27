@@ -343,7 +343,7 @@ export default function VectorArt() {
       src={lightbox?.img || ''}
       type="image"
       onClose={() => setLightbox(null)}
-      alt="Lightbox"
+        alt="Lightbox"
     />
   );
 

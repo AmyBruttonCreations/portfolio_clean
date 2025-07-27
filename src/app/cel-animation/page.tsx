@@ -5,7 +5,9 @@ import { useCallback } from "react";
 import HamburgerMenu from "../HamburgerMenu";
 import InfoBox from "../InfoBox";
 import React from "react";
+import { useIsMobile } from '../../utils/useIsMobile';
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
+import MasonryGallery from "../MasonryGallery";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -17,16 +19,22 @@ const navLinks = [
 
 ];
 
-const projects = [
+const projects: Array<{
+  title: string;
+  img?: string;
+  info: string;
+  sliverImgs?: string[];
+  video?: string;
+}> = [
   {
     title: "Pulp Fiction",
     img: "/vector-art/pulpfiction.jpg",
-    info: `I made this for my brother. He has a huge canvas print of it in his flat.\n\nI don’t mind seeing it, and that says a lot.`,
+    info: `I made this for my brother. He has a huge canvas print of it in his flat.  I don’t mind seeing it, and that says a lot.`,
   },
   {
     title: "Pet Portraits",
     img: "/vector-art/PetPortrait.png",
-    info: "Pet portrait occupying the full width.",
+    info: "Since I generally work from home, I often pet-sit for friends with non-dog friendly offices. Inevitably, those dogs become my muses. Pictured here are Tara and Sunce.",
   },
   {
     title: "Expanding Sliver Gallery",
@@ -39,12 +47,7 @@ const projects = [
       "/vector-art/hygh (6).png",
       "/vector-art/hygh (7).png"
     ],
-    info: "Expanding sliver gallery.",
-  },
-  {
-    title: "Equal Video",
-    video: "/vector-art/equal.mp4",
-    info: "This is a video project.",
+    info: "Besides cel animation, I get a lot of commissions requiring me to turn stock photos into something with more aesthetic personality. These are some examples of that.",
   },
   {
     title: "Second Sliver Gallery",
@@ -56,17 +59,6 @@ const projects = [
     info: "Second expanding sliver gallery.",
   },
 ];
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState<undefined | boolean>(undefined);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  return isMobile;
-}
 
 // Expanding sliver gallery component
 function ExpandingSliverGallery({ images, alt }: { images: string[]; alt: string }) {
@@ -99,14 +91,15 @@ function InfoPill({ text }: { text: string }) {
       className={`transition-all duration-300 inline-flex items-center justify-center cursor-pointer rounded-full magenta-glow`}
       style={{
         background: '#85DBD8',
-        width: (hovered || toggled) ? 'auto' : 40,
+        width: (hovered || toggled) ? 'fit-content' : 40,
+        maxWidth: '90vw',
         minWidth: 40,
         height: 40,
         boxShadow: '0 0 6px 1.5px #EF1481, 0 0 12px 3px #EF1481',
         fontSize: 28,
         paddingLeft: (hovered || toggled) ? 16 : 0,
         paddingRight: (hovered || toggled) ? 16 : 0,
-        transition: 'all 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
+        transition: 'width 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
       }}
       onMouseEnter={() => { if (!isMobile) setHovered(true); }}
       onMouseLeave={() => { if (!isMobile) setHovered(false); }}
@@ -115,13 +108,13 @@ function InfoPill({ text }: { text: string }) {
       <span className="flex items-center justify-center w-10 h-10 font-bold" style={{ color: '#EF1481' }}>i</span>
       {(hovered || toggled) && (
         <span
-          className="ml-2 text-gray-900 dark:text-gray-100 font-medium whitespace-nowrap transition-all duration-300 opacity-100"
+          className="ml-2 text-gray-900 dark:text-gray-100 font-medium transition-all duration-300 opacity-100"
           style={{
             fontSize: '1.25rem',
-            whiteSpace: 'nowrap',
-            maxWidth: 300,
-            overflow: 'hidden',
+            whiteSpace: 'normal',
+            width: '100%',
             transition: 'all 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
+            display: 'block',
           }}
         >
           {text}
@@ -131,7 +124,260 @@ function InfoPill({ text }: { text: string }) {
   );
 }
 
+// Add VideoProjectOverlay component for video overlays
+const defaultOverlayColor = 'rgba(200, 210, 60, 0.5)';
+type VideoProjectOverlayProps = {
+  videoSrc: string;
+  title: string;
+  company: string;
+  software: string;
+  description: string;
+  overlayColor?: string;
+  isOpen?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
+};
+function VideoProjectOverlay({
+  videoSrc,
+  title,
+  company,
+  software,
+  description,
+  overlayColor = defaultOverlayColor,
+  isOpen,
+  onOpen,
+  onClose,
+}: VideoProjectOverlayProps) {
+  const overlayRef = useRef(null);
+
+  // Helper to get solid color from overlayColor
+  function getSolidColor(color: string) {
+    // If rgba, convert to rgb
+    const rgbaMatch = color.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+    if (rgbaMatch) {
+      const [_, r, g, b] = rgbaMatch;
+      return `rgb(${r},${g},${b})`;
+    }
+    // If already rgb, return as is
+    const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (rgbMatch) return color;
+    // Fallback to default
+    return 'rgb(200,210,60)';
+  }
+  const solidLineColor = getSolidColor(overlayColor);
+
+  // Snap overlay back if scrolled out of view
+  useEffect(() => {
+    if (!isOpen) return;
+    const ref = overlayRef.current;
+    if (!ref) return;
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio < 0.5 && onClose) {
+          onClose();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(ref);
+    return () => observer.disconnect();
+  }, [isOpen, onClose]);
+
+  return (
+    <div className="w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center" ref={overlayRef} style={{ minHeight: 320 }}>
+      {/* Dashed line at the top, now matches overlay color */}
+      <div
+        style={{
+          borderTop: `4px dashed ${solidLineColor}`,
+          width: '100%',
+          margin: 0,
+          padding: 0,
+          boxSizing: 'border-box',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: 2,
+        }}
+      />
+      {/* SVG arrow for a tall, flattened triangle with cream glow, always visible, flips direction and color based on overlay state */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          height: '100%',
+          width: '10%',
+          minWidth: 48,
+          maxWidth: 96,
+          zIndex: 1000,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          transition: 'opacity 0.7s',
+          opacity: 1,
+          background: 'transparent',
+        }}
+        aria-label={isOpen ? 'Close overlay' : 'Open overlay'}
+        onClick={() => (isOpen ? onClose && onClose() : onOpen && onOpen())}
+      >
+        <div style={{ marginLeft: 24, width: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg
+            className={!isOpen ? 'bouncy-arrow' : ''}
+            width="24"
+            height="64"
+            viewBox="0 0 24 64"
+            style={{
+              display: 'block',
+              filter: isOpen
+                ? `drop-shadow(0 0 3px ${overlayColor}) drop-shadow(0 0 6px ${overlayColor})`
+                : 'drop-shadow(0 0 3px #FDF8F3) drop-shadow(0 0 6px #FDF8F3)',
+              transform: isOpen ? 'scaleX(-1)' : 'scaleX(1)',
+              transition: 'filter 0.3s, transform 0.7s',
+            }}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <polygon points="0,0 24,32 0,64" fill={isOpen ? overlayColor : '#FDF8F3'} />
+          </svg>
+        </div>
+      </div>
+      {/* Video always visible as background */}
+      <div className="w-full h-full flex items-center justify-center" style={{ position: 'relative', zIndex: 0 }}>
+        <video
+          src={videoSrc}
+          autoPlay
+          muted
+          loop
+          className="w-full h-full object-cover"
+          style={{ borderRadius: 0 }}
+        />
+      </div>
+      {/* Overlay slides fully off-screen to the left when openOverlay is true */}
+      <div
+        className="absolute top-0 left-0 w-full h-full flex items-center justify-center cursor-pointer transition-transform duration-700"
+        style={{
+          background: `linear-gradient(to left, ${(overlayColor || defaultOverlayColor).replace('0.5', '1')} 0%, ${overlayColor || defaultOverlayColor} 100%)`,
+          opacity: 1,
+          zIndex: 1,
+          transform: isOpen ? 'translateX(-100%)' : 'translateX(0)',
+          transition: 'transform 0.7s ease',
+          width: '100%',
+          height: '100%',
+        }}
+        // No click handler here; arrow handles open/close
+      >
+        {!isOpen && (
+          <div className="w-full h-full flex flex-col justify-center" style={{
+            position: 'absolute',
+            right: 0,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            textAlign: 'right',
+            background: 'transparent',
+            margin: 0,
+            padding: 0,
+            justifyContent: 'center',
+            zIndex: 2,
+          }}>
+            <div
+              className="overlay-text"
+              style={{
+                fontWeight: 900,
+                fontSize: 'clamp(1rem, 4vw, 2.4rem)',
+                textAlign: 'right',
+                color: '#FDF8F3',
+                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                width: '100%',
+                paddingRight: '3vw',
+                marginBottom: '0.2em',
+                letterSpacing: '0.04em',
+                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                textTransform: 'uppercase',
+              }}
+            >
+              {title}
+            </div>
+            <div
+              className="overlay-text"
+              style={{
+                fontWeight: 400,
+                fontSize: 'clamp(0.85rem, 2.5vw, 1.35rem)',
+                color: '#FDF8F3',
+                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                textTransform: 'lowercase',
+                margin: '0.5em 0',
+                textAlign: 'right',
+                width: '100%',
+                paddingRight: '3vw',
+              }}
+            >
+              {company}
+            </div>
+            <div
+              className="overlay-text"
+              style={{
+                fontWeight: 400,
+                fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
+                color: '#FDF8F3',
+                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                textTransform: 'lowercase',
+                margin: '0.5em 0',
+                textAlign: 'right',
+                width: '100%',
+                paddingRight: '3vw',
+              }}
+            >
+              {software}
+            </div>
+            <div
+              className="overlay-text"
+              style={{
+                fontWeight: 400,
+                fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
+                color: '#FDF8F3',
+                fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+                textShadow: '0 0 6px #FDF8F3, 0 0 12px #FDF8F3',
+                textTransform: 'lowercase',
+                margin: '0.5em 0',
+                textAlign: 'right',
+                width: '25%',
+                minWidth: 200,
+                maxWidth: 400,
+                paddingRight: '3vw',
+                alignSelf: 'flex-end',
+                boxSizing: 'border-box',
+              }}
+            >
+              {description}
+            </div>
+          </div>
+        )}
+        {isOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 3,
+            }}
+            onClick={onClose}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Remove PixelArtSpriteAnimation component and all raccoon sprite logic
+
 export default function VectorArt() {
+  const [openOverlayIndex, setOpenOverlayIndex] = useState<number | null>(null);
   // Title style
   const titleStyle: React.CSSProperties = {
     color: '#FDF8F3',
@@ -170,8 +416,6 @@ export default function VectorArt() {
   }, [showBanner]);
 
   const isMobile = useIsMobile();
-  const [lightbox, setLightbox] = useState<{ open: boolean; img: string } | null>(null);
-  const [showInfo, setShowInfo] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [iconBounced, setIconBounced] = useState(false);
   const [linkBounce, setLinkBounce] = useState(false);
@@ -291,11 +535,11 @@ export default function VectorArt() {
         <div
           style={{
             overflow: 'visible',
-            paddingTop: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '1.2em' : '2.5em',
-            paddingRight: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '0.5em' : '2.5em',
-            paddingBottom: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '0.5em' : '0.5em',
-            paddingLeft: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '0.5em' : '3.5em',
-            margin: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerWidth < window.innerHeight) ? '1em 0 0.5em 0' : '2em 0 0.5em 0',
+            paddingTop: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerHeight < window.innerWidth) ? '1.2em' : '2.5em',
+            paddingRight: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerHeight < window.innerWidth) ? '0.5em' : '2.5em',
+            paddingBottom: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerHeight < window.innerWidth) ? '0.5em' : '0.5em',
+            paddingLeft: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerHeight < window.innerWidth) ? '0.5em' : '3.5em',
+            margin: typeof window !== 'undefined' && (window.innerWidth <= 700 || window.innerHeight < window.innerWidth) ? '1em 0 0.5em 0' : '2em 0 0.5em 0',
             textAlign: 'center',
           }}
         >
@@ -312,28 +556,26 @@ export default function VectorArt() {
           style={{ paddingLeft: 0, paddingRight: 0 }}
         >
           <p style={{ color: '#FDF8F3', ...captionStyle }}>
-            <span
-              className="swipe-reveal"
-            >
-              I used to hate Adobe Illustrator. I’m obsessed with details and always felt vector art forced things to be simplified.
+            <span className="swipe-reveal">
+              Although I studied 3D and specialised in character modelling, somehow my career steered me towards cel animation.
             </span>
           </p>
           <p style={{ color: '#FDF8F3', marginTop: '1em', ...captionStyle }}>
             {showDelayedCaption && (
               <MarkerHighlightInView style={{ fontSize: 'clamp(1rem, 1.5vw, 1.35rem)' }}>
-                I have since changed my mind.
+                I hope to never lose the childlike joy of hitting play and seeing things move.
               </MarkerHighlightInView>
             )}
           </p>
         </div>
+        {/* Remove the sprite from the banner image half, only render in the text half */}
       </div>
       <div
         className="vector-banner-bottom flex items-center justify-center overflow-hidden aspect-square w-screen md:w-[50vw] max-w-screen md:max-w-[50vw]"
-        style={{ minWidth: 0, minHeight: 0, position: 'relative' }}
+        style={{ minWidth: 0, minHeight: 0, position: 'relative', zIndex: 2 }}
       >
-        <img
-          src="/vector-art/BannerArt_VA.png"
-          alt="Cel Animation Banner artwork"
+        <video
+          src="/cel-animation/SkillsetAnim_Cel.mp4"
           className="object-cover w-full h-full"
           style={{
             borderRadius: 0,
@@ -343,10 +585,15 @@ export default function VectorArt() {
             objectFit: 'cover',
             display: 'block',
           }}
-          onLoad={() => setBannerLoaded(true)}
+          autoPlay
+          loop
+          muted
+          playsInline
+          onLoadedData={() => setBannerLoaded(true)}
         />
         <div className="vhs-noise"></div>
         {bannerLoaded && <div className="scanlines"></div>}
+        {/* Remove the sprite from the banner image half, only render in the text half */}
       </div>
     </div>
   );
@@ -365,6 +612,28 @@ export default function VectorArt() {
     );
   }
 
+  const celAnimationGalleryItems: import("../MasonryGallery").MasonryGalleryItem[] = [
+    { src: "/cel-animation/JOPLYN/converted/LOOP03.mp4", hdSrc: "/cel-animation/JOPLYN/LOOP03.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/05_JOPLYN_KeepMeInYourMind_4K.mp4", hdSrc: "/cel-animation/JOPLYN/05_JOPLYN_KeepMeInYourMind_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/01_JOPLYN_Stains_4K.mp4", hdSrc: "/cel-animation/JOPLYN/01_JOPLYN_Stains_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/02_JOPLYN_Clay_4K.mp4", hdSrc: "/cel-animation/JOPLYN/02_JOPLYN_Clay_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/03_JOPLYN_IWantToBelieve_4K.mp4", hdSrc: "/cel-animation/JOPLYN/03_JOPLYN_IWantToBelieve_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/04_JOPLYN_RemindMe_4K.mp4", hdSrc: "/cel-animation/JOPLYN/04_JOPLYN_RemindMe_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/06_JOPLYN_Falling_4K.mp4", hdSrc: "/cel-animation/JOPLYN/06_JOPLYN_Falling_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/07_JOPLYN_GoBack_Looped_4K.mp4", hdSrc: "/cel-animation/JOPLYN/07_JOPLYN_GoBack_Looped_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/08_JOPLYN_Circles_4K.mp4", hdSrc: "/cel-animation/JOPLYN/08_JOPLYN_Circles_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/09_JOPLYN_BreatheMeIn_4K.mp4", hdSrc: "/cel-animation/JOPLYN/09_JOPLYN_BreatheMeIn_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/09_JOPLYN_BreatheMeIn_BreathingAnimation_4K.mp4", hdSrc: "/cel-animation/JOPLYN/09_JOPLYN_BreatheMeIn_BreathingAnimation_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/10_JOPLYN_BringMeHome_4K.mp4", hdSrc: "/cel-animation/JOPLYN/10_JOPLYN_BringMeHome_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/11_JOPLYN_CanYouSeeIt_4K.mp4", hdSrc: "/cel-animation/JOPLYN/11_JOPLYN_CanYouSeeIt_4K.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/SkillsetAnim_Cel.mp4", hdSrc: "/cel-animation/JOPLYN/SkillsetAnim_Cel.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/converted/LOOP04.mp4", hdSrc: "/cel-animation/JOPLYN/LOOP04.mp4", type: "video", orientation: "landscape" },
+    // Add new images and sticker
+    { src: "/cel-animation/JOPLYN/CharacterDesign_LINEUP_reformat.png", type: "image", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/JOPLYN_CharacterDesign+Turn.mp4", type: "video", orientation: "landscape" },
+    { src: "/cel-animation/JOPLYN/JOP_Sticker_LARGE-01.png", type: "image", orientation: "portrait" },
+  ];
+
   return (
     <div style={{ background: '#E4A4BD' }} className="flex flex-col items-center">
       <HamburgerMenu />
@@ -372,40 +641,104 @@ export default function VectorArt() {
       <div className="w-full">
         {topBanner}
       </div>
+      {/* New stacked images overlay project */}
+      <div className="w-full max-w-full">
+        <MasonryGallery
+          title="Cel Animation Project"
+          company="Your Company"
+          software="Your Software"
+          description="Project description here."
+          items={celAnimationGalleryItems}
+          overlayColor="rgba(239, 20, 129, 0.5)"
+          isOpen={openOverlayIndex === 0}
+          onOpen={() => setOpenOverlayIndex(0)}
+          onClose={() => setOpenOverlayIndex(null)}
+          columns={3}
+        />
+      </div>
       <div className="w-full flex flex-col items-center">
-        {projects.map((project, idx) => {
+        {/* HYGH Series (Masonry) moved here above the video project */}
+        <MasonryGallery
+          title="corporate design"
+          company="@ HYGH ag"
+          software="adobe illustrator"
+          description="Besides cel animation, I get a lot of commissions requiring me to turn stock photos into something with more aesthetic personality. These are some examples of that."
+          items={[
+            { src: "/cel-animation/WOOGA/Makingof0001.png", type: "image", orientation: "landscape" },
+            { src: "/cel-animation/WOOGA/Makingof0002.png", type: "image", orientation: "landscape" },
+            { src: "/cel-animation/WOOGA/converted/CatchTheCat_MakingOf.mp4", hdSrc: "/cel-animation/WOOGA/CatchTheCat_MakingOf.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/WOOGA/converted/Jj H Ua-Liveaction Catchthecat 30S En 1920X1080 Cta.mp4", hdSrc: "/cel-animation/WOOGA/Jj H Ua-Liveaction Catchthecat 30S En 1920X1080 Cta.mp4", type: "video", orientation: "landscape" },
+          ]}
+          overlayColor="rgba(133, 219, 216, 0.5)"
+          isOpen={openOverlayIndex === 4}
+          onOpen={() => setOpenOverlayIndex(4)}
+          onClose={() => setOpenOverlayIndex(null)}
+          columns={2}
+          zoomScale={1.1}
+        />
+        <MasonryGallery
+          title="GEBERIT KATALYST"
+          company="GEBERIT"
+          software="Adobe After Effects"
+          description="Animation project for GEBERIT showcasing creative visual storytelling and brand communication."
+          items={[
+            { src: "/cel-animation/GEBERIT_KATALYST/converted/Mountaineer.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/Mountaineer.mov", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/GEBERIT_KATALYST/converted/8aY7k4GvsYw_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/8aY7k4GvsYw_576.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/GEBERIT_KATALYST/converted/EJnj8GHKj_C_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/EJnj8GHKj_C_576.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/GEBERIT_KATALYST/converted/UzMuRZqFubT_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/UzMuRZqFubT_576.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/GEBERIT_KATALYST/converted/TKu5EoYTpWD_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/TKu5EoYTpWD_576.mp4", type: "video", orientation: "landscape" },
+          ]}
+          overlayColor="rgba(200, 210, 60, 0.5)"
+          isOpen={openOverlayIndex === 104}
+          onOpen={() => setOpenOverlayIndex(104)}
+          onClose={() => setOpenOverlayIndex(null)}
+          columns={2}
+          zoomScale={1.1}
+        />
+        <MasonryGallery
+          title="corporate design"
+          company="@ HYGH ag"
+          software="adobe illustrator"
+          description="Besides cel animation, I get a lot of commissions requiring me to turn stock photos into something with more aesthetic personality. These are some examples of that."
+          items={[
+            { src: "/cel-animation/S&E/converted/Episode01.mp4", hdSrc: "/cel-animation/S&E/Episode01.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/S&E/converted/Episode02.mp4", hdSrc: "/cel-animation/S&E/Episode02.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/S&E/converted/nextup.mp4", hdSrc: "/cel-animation/S&E/nextup.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/S&E/converted/gif02.mp4", hdSrc: "/cel-animation/S&E/gif02.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/S&E/converted/gif04.mp4", hdSrc: "/cel-animation/S&E/gif04.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/S&E/converted/gif01.mp4", hdSrc: "/cel-animation/S&E/gif01.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/S&E/converted/gif03.mp4", hdSrc: "/cel-animation/S&E/gif03.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/S&E/converted/woolyAnimationTest.mp4", hdSrc: "/cel-animation/S&E/woolyAnimationTest.mov", type: "video", orientation: "landscape" },
+          ]}
+          overlayColor="rgba(239, 20, 129, 0.5)"
+          isOpen={openOverlayIndex === 204}
+          onOpen={() => setOpenOverlayIndex(204)}
+          onClose={() => setOpenOverlayIndex(null)}
+          columns={2}
+          zoomScale={1.1}
+        />
+        {/* Video and other projects */}
+        {projects.slice(2).map((project, idx) => {
           // Video project logic
           if (project.video) {
             return (
-              <div key={idx} className="project-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
-                <div className="relative w-full flex flex-col justify-center">
-                  <video
-                    src={project.video!}
-                    autoPlay
-                    muted
-                    loop
-                    className="w-full h-full object-cover"
-                    style={{ borderRadius: 0 }}
-                  />
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                    <InfoPill text={`Project info goes here...`} />
-                  </div>
-                </div>
-              </div>
+              <VideoProjectOverlay
+                key={idx}
+                videoSrc={project.video}
+                title={idx === 1 ? "EQUAL // last night in Paris" : project.title}
+                company={idx === 1 ? "Storz&Escherich" : "Collab: Markus Hoffmann"}
+                software={idx === 1 ? "Adobe Illustrator + After Effects" : "After Effects, Illustrator"}
+                description={project.info}
+                overlayColor={defaultOverlayColor}
+                isOpen={openOverlayIndex === 1000 + idx}
+                onOpen={() => setOpenOverlayIndex(1000 + idx)}
+                onClose={() => setOpenOverlayIndex(null)}
+              />
             );
           }
           // Expanding sliver gallery logic
           if (project.sliverImgs) {
-            return (
-              <div key={idx} className="sliver-gallery-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
-                <div className="relative w-full flex flex-col justify-center">
-                  <ExpandingSliverGallery images={project.sliverImgs} alt={project.title} />
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                    <InfoPill text={`Project info goes here...`} />
-                  </div>
-                </div>
-              </div>
-            );
+            return null;
           }
           return (
             <div key={idx} className="project-container w-full aspect-[16/9] lg:h-screen bg-white dark:bg-gray-800 shadow overflow-hidden relative flex flex-col justify-center">
@@ -416,16 +749,76 @@ export default function VectorArt() {
                   className="w-full h-full object-cover cursor-pointer transition-transform hover:scale-105"
                   style={{ borderRadius: 0 }}
                 />
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                  <InfoPill text={`Project info goes here...`} />
-                </div>
+                {/* InfoPill removed as per request */}
               </div>
             </div>
           );
         })}
       </div>
+      <div className="w-full flex flex-col items-center">
+        {/* Standard MasonryGallery for second sliver gallery images */}
+        {Array.isArray(projects[4]?.sliverImgs) && (
+            <MasonryGallery
+              title="VW Pitch"
+              company="Storz&Escherich"
+              software="Adobe Illustrator"
+              description="a pitch I did for VW that I'm still quite fond of. "
+              items={projects[4].sliverImgs.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
+              overlayColor="rgba(239, 20, 129, 0.5)"
+              isOpen={openOverlayIndex === 1004}
+              onOpen={() => setOpenOverlayIndex(1004)}
+              onClose={() => setOpenOverlayIndex(null)}
+              columns={2}
+              zoomScale={1.1}
+            topLineColor="rgb(239,20,129)"
+          />
+        )}
+      </div>
+      <div className="w-full flex flex-col items-center">
+        {/* New project with blue overlay */}
+        <MasonryGallery
+          title="908 Project"
+          company="908"
+          software="Adobe After Effects"
+          description="Animation project showcasing creative storytelling and visual effects."
+          items={[
+            { src: "/cel-animation/908/converted/Roche _ Mut macht Originale - Christoph Kolumbus (1080p with 24fps).mp4", hdSrc: "/cel-animation/908/Roche _ Mut macht Originale - Christoph Kolumbus (1080p with 24fps).mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/908/converted/Roche _ Mut macht Originale - Thomas Edison (1080p with 24fps).mp4", hdSrc: "/cel-animation/908/Roche _ Mut macht Originale - Thomas Edison (1080p with 24fps).mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/908/converted/AvL Brand Storyworlds (720p with 25fps).mp4", hdSrc: "/cel-animation/908/AvL Brand Storyworlds (720p with 25fps).mp4", type: "video", orientation: "landscape" },
+          ]}
+          overlayColor="rgba(133, 219, 216, 0.5)"
+          isOpen={openOverlayIndex === 304}
+          onOpen={() => setOpenOverlayIndex(304)}
+          onClose={() => setOpenOverlayIndex(null)}
+          columns={2}
+          zoomScale={1.1}
+        />
+      </div>
       {/* Mobile notification banner */}
       {isMobile !== undefined && isMobile && orientation === 'portrait' && mobileBanner}
+      {/* Add bouncy-arrow animation keyframes if not already present */}
+      <style jsx global>{`
+        @keyframes arrow-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.25); }
+        }
+        .bouncy-arrow {
+          animation: arrow-pulse 1s cubic-bezier(.68,-0.6,.32,1.6) infinite;
+          animation-delay: 2s;
+        }
+        img[src*="JOP_Sticker_LARGE-01.png"] {
+          border-radius: 50%;
+          object-fit: cover;
+          background: transparent !important;
+        }
+        .masonry-gallery-item img[src*="JOP_Sticker_LARGE-01.png"] {
+          background: transparent !important;
+        }
+        .masonry-gallery-item:has(img[src*="JOP_Sticker_LARGE-01.png"]) {
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+      `}</style>
     </div>
   );
 } 

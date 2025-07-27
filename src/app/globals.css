@@ -49,67 +49,6 @@ body {
   0% { opacity: 0; transform: translateX(60px); }
   100% { opacity: 1; transform: translateX(0); }
 }
-@keyframes highlight-sweep {
-  0% {
-    background-size: 0% 100%;
-    background-position: 0 100%;
-    color: inherit;
-  }
-  50% {
-    background-size: 100% 100%;
-    background-position: 0 100%;
-    color: #fff;
-  }
-  100% {
-    background-size: 100% 100%;
-    background-position: 0 100%;
-    color: #fff;
-  }
-}
-.highlight-animate {
-  position: relative;
-  display: inline-block;
-  color: #FDF8F3;
-  font-weight: 600;
-  padding: 0 0.2em;
-  overflow: hidden;
-  transition: color 0.2s;
-}
-.highlight-animate::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 0%;
-  background: #EF1481;
-  z-index: 1;
-  transition: none;
-  animation: highlight-wipe 1.2s cubic-bezier(.68,-0.6,.32,1.6) 0.2s forwards;
-}
-.highlight-animate span, .highlight-animate > * {
-  position: relative;
-  z-index: 2;
-}
-.highlight-animate.wiped {
-  color: #FDF8F3 !important;
-  transition: color 0.2s;
-}
-.highlight-animate.wiped::before {
-  opacity: 0;
-  width: 0% !important;
-  pointer-events: none;
-  transition: opacity 0.2s, width 0s 0.2s;
-}
-@keyframes highlight-wipe {
-  0% {
-    width: 0%;
-  }
-  80% {
-    width: 100%;
-  }
-  100% {
-    width: 100%;
-  }
-}
 
 /* Swipe reveal animation for title and image using clip-path */
 @keyframes swipe-reveal {
@@ -655,9 +594,9 @@ body {
   align-items: center;
   justify-content: center;
   cursor: zoom-out;
-  background: rgba(0,0,0,0.18);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(239, 20, 129, 0.5); /* magenta overlay */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   width: 100vw;
   height: 100vh;
   overflow: auto;
@@ -719,4 +658,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Remove all drop shadows from gallery content (images and videos) throughout the website */
+.my-masonry-grid img,
+.my-masonry-grid video,
+.masonry-gallery-item img,
+.masonry-gallery-item video,
+.project-overlay-gallery img,
+.project-overlay-gallery video {
+  box-shadow: none !important;
+  filter: none !important;
 }
