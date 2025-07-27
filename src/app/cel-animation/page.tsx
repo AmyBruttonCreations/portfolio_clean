@@ -686,7 +686,6 @@ export default function VectorArt() {
             { src: "/cel-animation/GEBERIT_KATALYST/converted/8aY7k4GvsYw_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/8aY7k4GvsYw_576.mp4", type: "video", orientation: "landscape" },
             { src: "/cel-animation/GEBERIT_KATALYST/converted/EJnj8GHKj_C_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/EJnj8GHKj_C_576.mp4", type: "video", orientation: "landscape" },
             { src: "/cel-animation/GEBERIT_KATALYST/converted/UzMuRZqFubT_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/UzMuRZqFubT_576.mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/GEBERIT_KATALYST/converted/TKu5EoYTpWD_576.mp4", hdSrc: "/cel-animation/GEBERIT_KATALYST/TKu5EoYTpWD_576.mp4", type: "video", orientation: "landscape" },
           ]}
           overlayColor="rgba(200, 210, 60, 0.5)"
           isOpen={openOverlayIndex === 104}
@@ -784,7 +783,7 @@ export default function VectorArt() {
           items={[
             { src: "/cel-animation/908/converted/Roche _ Mut macht Originale - Christoph Kolumbus (1080p with 24fps).mp4", hdSrc: "/cel-animation/908/Roche _ Mut macht Originale - Christoph Kolumbus (1080p with 24fps).mp4", type: "video", orientation: "landscape" },
             { src: "/cel-animation/908/converted/Roche _ Mut macht Originale - Thomas Edison (1080p with 24fps).mp4", hdSrc: "/cel-animation/908/Roche _ Mut macht Originale - Thomas Edison (1080p with 24fps).mp4", type: "video", orientation: "landscape" },
-            { src: "/cel-animation/908/converted/AvL Brand Storyworlds (720p with 25fps).mp4", hdSrc: "/cel-animation/908/AvL Brand Storyworlds (720p with 25fps)_compressed.mp4", type: "video", orientation: "landscape" },
+            { src: "/cel-animation/908/converted/AvL Brand Storyworlds (720p with 25fps).mp4", hdSrc: "/cel-animation/908/AvL Brand Storyworlds (720p with 25fps).mp4", type: "video", orientation: "landscape" },
           ]}
           overlayColor="rgba(133, 219, 216, 0.5)"
           isOpen={openOverlayIndex === 304}

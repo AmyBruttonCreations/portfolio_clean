@@ -29,9 +29,9 @@ const galleryImages = [
   { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (7).jpg', hd: '/2D-3D-illustration/TRIAD_HD (7).png' },
   { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (8).jpg', hd: '/2D-3D-illustration/TRIAD_HD (8).png' },
   { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (9).jpg', hd: '/2D-3D-illustration/TRIAD_HD (9).png' },
-      { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (10).jpg', hd: '/2D-3D-illustration/TRIAD_HD (10)_compressed.png' },
+      { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (10).jpg', hd: '/2D-3D-illustration/TRIAD_HD (10).png' },
   { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (11).jpg', hd: '/2D-3D-illustration/TRIAD_HD (11).png' },
-      { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (12).jpg', hd: '/2D-3D-illustration/TRIAD_HD (12)_compressed.png' },
+      { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (12).jpg', hd: '/2D-3D-illustration/TRIAD_HD (12).png' },
   { thumb: '/2D-3D-illustration/thumbs/TRIAD_HD (15).jpg', hd: '/2D-3D-illustration/TRIAD_HD (15).png' },
 ];
 const overlayColors = [
