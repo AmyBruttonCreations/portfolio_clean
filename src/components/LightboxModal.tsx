@@ -54,6 +54,12 @@ const LightboxModal: React.FC<LightboxModalProps> = ({ open, src, type, onClose,
           controls
           className="lightbox-modal__video"
           onClick={e => e.stopPropagation()}
+          onPlay={(e) => {
+            // Prevent play/pause conflicts
+            e.currentTarget.play().catch(() => {
+              // Ignore play errors - they're usually harmless
+            });
+          }}
         />
       )}
       <button

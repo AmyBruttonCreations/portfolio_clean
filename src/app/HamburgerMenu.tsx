@@ -105,18 +105,20 @@ export default function HamburgerMenu({ customNavLinks = navLinks }) {
           fontSize: 28,
           textDecoration: 'none',
           transition: 'background 0.2s',
+          borderRadius: '50%',
+          cursor: 'url("/cursors/finger.png?v=2") 12 12',
         }}
       >
         {/* Closed Envelope (default) */}
-        <span className="block group-hover:hidden transition-all duration-300">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <span className="block group-hover:hidden transition-all duration-300" style={{ cursor: 'url("/cursors/finger.png?v=2") 12 12' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ cursor: 'url("/cursors/finger.png?v=2") 12 12' }}>
             <rect x="2" y="4" width="20" height="16" rx="2"/>
             <polyline points="22,6 12,13 2,6"/>
           </svg>
         </span>
         {/* Open Envelope (on hover) */}
-        <span className="hidden group-hover:block transition-all duration-300">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <span className="hidden group-hover:block transition-all duration-300" style={{ cursor: 'url("/cursors/finger.png?v=2") 12 12' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ cursor: 'url("/cursors/finger.png?v=2") 12 12' }}>
             <rect x="2" y="8" width="20" height="12" rx="2"/>
             <polyline points="2,8 12,3 22,8"/>
             <polyline points="2,8 12,15 22,8"/>

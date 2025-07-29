@@ -9,6 +9,7 @@ import { useIsMobile } from '../../utils/useIsMobile';
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
 import MasonryGallery from "../MasonryGallery";
 import VideoProjectOverlay from "../../components/VideoProjectOverlay";
+import MobileBanner from "../../components/MobileBanner";
 
 
 
@@ -28,6 +29,15 @@ const projects = [
     title: "Equal Video",
     video: "/vector-art/equal.mp4",
     info: "This was my first collaboration with the wonderful Markus Hoffmann. We were inspired by one-line tattoos to create a series of illustrations that all fed into each other. I made all the visuals, and Markus was responsible for the animation.",
+  },
+  {
+    title: "VW PITCH",
+    images: [
+      "/vector-art/vw (1).png",
+      "/vector-art/vw (2).png", 
+      "/vector-art/vw (3).png"
+    ],
+    info: "a pitch i did for VW that i'm still quite fond of.",
   },
 
 ];
@@ -142,38 +152,9 @@ export default function VectorArt() {
 
   // Dismissible mobile notification
   const mobileBanner = (
-    <div
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-8 py-4 rounded-2xl shadow-lg flex items-center gap-3 font-bold text-base"
-      style={{
-        background: '#EF1481',
-        color: '#FDF8F3',
-        fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
-        boxShadow: '0 0 16px 4px #EF1481, 0 0 32px 8px #fff',
-        letterSpacing: '0.02em',
-        minWidth: 0,
-        maxWidth: '90vw',
-        display: showMobileBanner ? 'flex' : 'none',
-      }}
-    >
-      <span>Pssst - all of this looks so much better in landscape. Feel free to rotate your phone or give it a spin on your laptop &lt;3 !</span>
-      <button
-        className="ml-2 flex items-center justify-center w-8 h-8 rounded-full"
-        style={{
-          background: '#FDF8F3',
-          color: '#EF1481',
-          border: 'none',
-          boxShadow: '0 0 8px 2px #EF1481',
-          cursor: 'pointer',
-          fontWeight: 900,
-          fontSize: 22,
-          padding: 0,
-        }}
-        onClick={() => setShowMobileBanner(false)}
-        aria-label="Dismiss notification"
-      >
-        ×
-      </button>
-    </div>
+    <MobileBanner open={showMobileBanner} onClose={() => setShowMobileBanner(false)}>
+      Pssst - all of this looks so much better in landscape. Feel free to rotate your phone or give it a spin on your laptop &lt;3 !
+    </MobileBanner>
   );
 
   // Add in-view animation for Vector Art title
@@ -296,7 +277,7 @@ export default function VectorArt() {
           onOpen={() => setOpenOverlayIndex(0)}
           onClose={() => setOpenOverlayIndex(null)}
           stacked={true}
-          zoomScale={1.1}
+          zoomScale={0}
         />
       </div>
       <div className="w-full flex flex-col items-center">
@@ -320,7 +301,7 @@ export default function VectorArt() {
           onOpen={() => setOpenOverlayIndex(4)}
           onClose={() => setOpenOverlayIndex(null)}
           columns={2}
-          zoomScale={1.1}
+          zoomScale={0}
         />
         {/* Video project */}
         {projects.slice(2).map((project, idx) => {
@@ -338,6 +319,25 @@ export default function VectorArt() {
                 isOpen={openOverlayIndex === 1000 + idx}
                 onOpen={() => setOpenOverlayIndex(1000 + idx)}
                 onClose={() => setOpenOverlayIndex(null)}
+              />
+            );
+          }
+          // Masonry gallery project logic
+          if (project.images) {
+            return (
+              <MasonryGallery
+                key={idx}
+                title={project.title}
+                company="storz&escherich"
+                software="adobe illustrator"
+                description={project.info}
+                items={project.images.map(src => ({ src, type: 'image', orientation: 'landscape' }))}
+                overlayColor="rgba(239, 20, 129, 0.5)"
+                isOpen={openOverlayIndex === 2000 + idx}
+                onOpen={() => setOpenOverlayIndex(2000 + idx)}
+                onClose={() => setOpenOverlayIndex(null)}
+                columns={2}
+                zoomScale={0}
               />
             );
           }

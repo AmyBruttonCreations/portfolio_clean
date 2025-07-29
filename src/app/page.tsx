@@ -163,7 +163,7 @@ export default function Homepage() {
         }}
       >
         <style jsx>{`
-          @media (max-width: 900px) {
+          @media (max-width: 600px) {
             .about-section {
               min-height: 100vh !important;
               display: flex !important;
@@ -210,6 +210,27 @@ export default function Homepage() {
               font-size: 0.92rem !important;
             }
           }
+          
+          /* Tablet portrait adjustments - show photo but scale down */
+          @media (min-width: 601px) and (max-width: 900px) {
+            .about-photo {
+              width: 140px !important;
+              height: 140px !important;
+              display: flex !important;
+            }
+            .about-box {
+              transform: scale(0.9) !important;
+            }
+            .about-title {
+              font-size: 1.8rem !important;
+            }
+            .about-caption {
+              font-size: 1.1rem !important;
+            }
+            .about-maintext, .about-secondarytext {
+              font-size: 1rem !important;
+            }
+          }
         `}</style>
         <div
           className="about-box"
@@ -223,7 +244,7 @@ export default function Homepage() {
             maxWidth: 900,
             minWidth: 320,
             minHeight: 320,
-            marginLeft: '2rem',
+            marginLeft: '15%',
             marginRight: 'auto',
             padding: '2.5rem',
             display: 'flex',
@@ -350,6 +371,32 @@ export default function Homepage() {
               font-size: 1.1rem !important;
             }
           }
+          
+          /* Tablet landscape responsive adjustments */
+          @media (min-width: 901px) and (max-width: 1200px) and (min-aspect-ratio: 1/1) {
+            .skillset-section {
+              width: 95% !important;
+              max-width: 1200px !important;
+            }
+            .skillset-bar {
+              min-width: 0 !important;
+              width: 35% !important;
+              max-width: 400px !important;
+            }
+            .skillset-menu {
+              min-width: 0 !important;
+              width: 65% !important;
+              max-width: 800px !important;
+              padding: 2rem 3rem 2rem 4rem !important;
+            }
+            .skillset-thumb {
+              width: 200px !important;
+              height: 112px !important;
+            }
+            .skillset-link {
+              font-size: 1.5rem !important;
+            }
+          }
         `}</style>
         <div
           className="skillset-section"
@@ -373,8 +420,9 @@ export default function Homepage() {
             borderBottomLeftRadius: '2rem',
             borderTopRightRadius: 0,
             borderBottomRightRadius: 0,
-            minWidth: 800,
-            width: 800,
+            minWidth: 0,
+            width: '35%',
+            maxWidth: 800,
             height: 180,
             display: 'flex',
             alignItems: 'center',
@@ -410,7 +458,9 @@ export default function Homepage() {
             borderTopLeftRadius: '2rem',
             borderBottomLeftRadius: 0,
             flex: 1,
-            minWidth: 800,
+            minWidth: 0,
+            width: '65%',
+            maxWidth: 800,
             minHeight: 260,
             display: 'flex',
             flexDirection: 'column',
@@ -430,7 +480,20 @@ export default function Homepage() {
             </div>
             <div className="skillset-row" style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', marginBottom: 0 }}>
               <div className="skillset-thumb" style={{ width: 288, height: 162, background: '#222', borderRadius: 0, overflow: 'hidden', flex: 'none' }}>
-                <video src="/homepage/skillsetAnim_Cel.mp4" autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <video 
+                  src="/homepage/skillsetAnim_Cel.mp4" 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onPlay={(e) => {
+                    // Prevent play/pause conflicts
+                    e.currentTarget.play().catch(() => {
+                      // Ignore play errors - they're usually harmless
+                    });
+                  }}
+                />
               </div>
               <Link href="/cel-animation" style={{ textDecoration: 'none' }}>
                 <div className="rgb-split-hover skillset-link" style={{ fontWeight: 900, fontSize: '2rem', color: '#EF1481', textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 0.2s' }}>Cel Animation</div>

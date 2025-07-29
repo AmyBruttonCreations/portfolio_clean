@@ -9,6 +9,7 @@ import { useIsMobile } from '../../utils/useIsMobile';
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
 import MasonryGallery from "../MasonryGallery";
 import PixelArtSprite from "../../components/PixelArtSprite";
+import MobileBanner from "../../components/MobileBanner";
 
 
 
@@ -84,11 +85,23 @@ export default function VectorArt() {
   const [showMobileBanner, setShowMobileBanner] = useState(true); // for mobile notification
   const [bannerLoaded, setBannerLoaded] = useState(false);
   const [showDelayedCaption, setShowDelayedCaption] = useState(false);
+  const [contentLoaded, setContentLoaded] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  
   useEffect(() => { setHasMounted(true); }, []);
+  
+  // Load all gallery images/videos before showing content
   useEffect(() => {
     if (hasMounted) {
-      const t = setTimeout(() => setShowBanner(true), 50);
-      return () => clearTimeout(t);
+      const loadAllContent = async () => {
+        // Simple approach: just wait a bit and show the page
+        setTimeout(() => {
+          setContentLoaded(true);
+          setShowBanner(true);
+        }, 4000); // 4 seconds minimum loading time
+      };
+      
+      loadAllContent();
     }
   }, [hasMounted]);
   useEffect(() => {
@@ -165,38 +178,9 @@ export default function VectorArt() {
 
   // Dismissible mobile notification
   const mobileBanner = (
-    <div
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-8 py-4 rounded-2xl shadow-lg flex items-center gap-3 font-bold text-base"
-      style={{
-        background: '#EF1481',
-        color: '#FDF8F3',
-        fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
-        boxShadow: '0 0 16px 4px #EF1481, 0 0 32px 8px #fff',
-        letterSpacing: '0.02em',
-        minWidth: 0,
-        maxWidth: '90vw',
-        display: showMobileBanner ? 'flex' : 'none',
-      }}
-    >
-      <span>Pssst - all of this looks so much better in landscape. Feel free to rotate your phone or give it a spin on your laptop &lt;3 !</span>
-      <button
-        className="ml-2 flex items-center justify-center w-8 h-8 rounded-full"
-        style={{
-          background: '#FDF8F3',
-          color: '#EF1481',
-          border: 'none',
-          boxShadow: '0 0 8px 2px #EF1481',
-          cursor: 'pointer',
-          fontWeight: 900,
-          fontSize: 22,
-          padding: 0,
-        }}
-        onClick={() => setShowMobileBanner(false)}
-        aria-label="Dismiss notification"
-      >
-        ×
-      </button>
-    </div>
+    <MobileBanner open={showMobileBanner} onClose={() => setShowMobileBanner(false)}>
+      Pssst - all of this looks so much better in landscape. Feel free to rotate your phone or give it a spin on your laptop &lt;3 !
+    </MobileBanner>
   );
 
   // Add in-view animation for Vector Art title
@@ -275,6 +259,12 @@ export default function VectorArt() {
           muted
           playsInline
           onLoadedData={() => setBannerLoaded(true)}
+          onPlay={(e) => {
+            // Prevent play/pause conflicts
+            e.currentTarget.play().catch(() => {
+              // Ignore play errors - they're usually harmless
+            });
+          }}
         />
         <div className="vhs-noise"></div>
         {bannerLoaded && <div className="scanlines"></div>}
@@ -283,16 +273,46 @@ export default function VectorArt() {
     </div>
   );
 
-  // Only render the loader before mount or before showBanner is true
-  if (!hasMounted || !showBanner) {
+  // Only render the loader before mount or before content is fully loaded
+  if (!hasMounted || !contentLoaded || !showBanner) {
     return (
       <div className="w-full flex flex-col items-center justify-center h-screen" style={{ background: '#E4A4BD' }}>
-        <div
-          className="animate-spin rounded-full border-8 border-t-8 border-[#EF1481] border-t-transparent w-24 h-24"
+        <PixelArtSprite
+          basePath="/cel-animation/sprites/retimed/CHEWINGCOW_"
+          frameCount={82}
+          idleEnd={81}
+          runStart={0}
+          runEnd={81}
+          trigger={false}
           style={{
-            boxShadow: '0 0 32px 8px #EF1481, 0 0 64px 16px #E4A4BD'
+            width: 'clamp(400px, 60vw, 800px)',
+            height: 'auto',
+            filter: 'drop-shadow(0 0 16px #EF1481)',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%) scale(1)',
           }}
         />
+        <div style={{
+          position: 'absolute',
+          bottom: '20%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: '#EF1481',
+          fontSize: 'clamp(1rem, 2vw, 1.5rem)',
+          fontWeight: 600,
+          textAlign: 'center',
+          fontFamily: "'Courier New', monospace",
+          textShadow: '0 0 8px #EF1481',
+          imageRendering: 'pixelated',
+          textRendering: 'geometricPrecision',
+          letterSpacing: '0.3em',
+          textTransform: 'uppercase',
+          filter: 'contrast(200%) brightness(120%)',
+        }}>
+          RUMINATING...
+        </div>
       </div>
     );
   }
@@ -327,19 +347,19 @@ export default function VectorArt() {
         <div style={{position: 'relative', width: '100%', height: '100%'}}>
           <PixelArtSprite
             basePath="/cel-animation/sprites/retimed/SPACECOW_Master_"
-            frameCount={606}
-            idleEnd={605}
+            frameCount={586}
+            idleEnd={585}
             runStart={0}
-            runEnd={605}
+            runEnd={585}
             trigger={false}
             style={{
               position: 'absolute',
-              top: '75%',
-              left: '90%',
+              top: '80%',
+              left: '20%',
               width: 'min(220px, 22vw)',
-              zIndex: 1, // behind the banner image
+              zIndex: 1, // below banner image but above caption
               pointerEvents: 'none',
-              transform: 'scale(8) translateX(-100%)',
+              transform: `scale(${Math.min(8, Math.max(2, window.innerWidth / 200))})`,
             }}
           />
           <div style={{ position: 'relative', zIndex: 2 }}>

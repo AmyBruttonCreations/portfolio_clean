@@ -179,9 +179,9 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                 key={idx}
                 style={{
                   width: "100%",
-                  background: "#fff",
+                  background: "transparent",
                   borderRadius: 8,
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+                  boxShadow: "none",
                   overflow: "hidden",
                   cursor: "pointer",
                   transition: "transform 0.3s",
@@ -196,7 +196,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                   }
                 }}
                 onMouseEnter={e => {
-                  if (!isMobile && !lightbox?.open) {
+                  if (!isMobile && !lightbox?.open && zoomScale !== 0) {
                     const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
                     setZoomedRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
                     setZoomedIdx(idx);
@@ -210,7 +210,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                     alt={`${title} ${item.orientation} ${idx + 1}`}
                     width={item.orientation === "portrait" ? 400 : 600}
                     height={item.orientation === "portrait" ? 600 : 400}
-                    style={{ width: "100%", height: "auto", cursor: "pointer" }}
+                    style={{ width: "100%", height: "auto", cursor: "pointer", borderRadius: 8 }}
                     sizes="100vw"
                     priority={idx < 3}
                     onClick={() => setLightbox({ open: true, src: item.hdSrc || item.src, type: 'image' })}
@@ -221,7 +221,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                     loop
                     muted
                     playsInline
-                    style={{ width: "100%", height: "auto", background: "#000", cursor: "pointer" }}
+                    style={{ width: "100%", height: "auto", background: "#000", cursor: "pointer", borderRadius: 8 }}
                     onClick={() => setLightbox({ open: true, src: item.src, type: 'video' })}
                     ref={(el) => {
                       if (el) {
@@ -284,7 +284,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                     }
                   }}
                   onMouseEnter={e => {
-                    if (!isMobile && !lightbox?.open) {
+                    if (!isMobile && !lightbox?.open && zoomScale !== 0) {
                       const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
                       setZoomedRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
                       setZoomedIdx(idx);
@@ -298,7 +298,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                       alt={`${title} ${item.orientation} ${idx + 1}`}
                       width={item.orientation === "portrait" ? 400 : 600}
                       height={item.orientation === "portrait" ? 600 : 400}
-                      style={{ width: "100%", height: "auto", cursor: "pointer" }}
+                      style={{ width: "100%", height: "auto", cursor: "pointer", borderRadius: 8 }}
                       sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                       priority={idx < 3}
                       onClick={() => setLightbox({ open: true, src: item.hdSrc || item.src, type: 'image' })}
@@ -309,7 +309,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                       loop
                       muted
                       playsInline
-                      style={{ width: "100%", height: "auto", background: "#000", cursor: "pointer" }}
+                      style={{ width: "100%", height: "auto", background: "#000", cursor: "pointer", borderRadius: 8 }}
                       onClick={() => setLightbox({ open: true, src: item.src, type: 'video' })}
                       ref={(el) => {
                         if (el) {
@@ -344,7 +344,7 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
               top: zoomedRect.top + zoomedRect.height / 2,
               width: zoomedRect.width,
               height: zoomedRect.height,
-              transform: `translate(-50%, -50%) scale(${zoomScale || 1.4})`,
+              transform: `translate(-50%, -50%) scale(${zoomScale === 0 ? 1 : (zoomScale || 1.4)})`,
               zIndex: 3000,
               pointerEvents: 'none',
               transition: 'transform 0.3s',
@@ -368,6 +368,12 @@ const MasonryGallery: React.FC<MasonryGalleryProps> = ({
                 playsInline
                 style={{ width: '100%', height: 'auto', background: '#000', borderRadius: 8, boxShadow: '0 2px 12px rgba(0,0,0,0.12)' }}
                 draggable={false}
+                onPlay={(e) => {
+                  // Prevent play/pause conflicts
+                  e.currentTarget.play().catch(() => {
+                    // Ignore play errors - they're usually harmless
+                  });
+                }}
               />
             )}
           </div>,

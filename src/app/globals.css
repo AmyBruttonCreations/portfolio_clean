@@ -647,6 +647,7 @@ body, html {
   transition: opacity 0.7s;
   opacity: 1;
   background: transparent;
+  padding: 8px;
 }
 .overlay-arrow-area__icon {
   margin-left: 24px;
@@ -669,17 +670,19 @@ body, html {
 
 /* Custom cursors */
 .cursor-arrow {
-  cursor: url('/cursors/arrow.png?v=2') 0 0, auto;
+  cursor: url('/cursors/arrow.png?v=2') 12 12, auto;
 }
 .cursor-finger {
-  cursor: url('/cursors/finger.png?v=2') 0 0, pointer;
+  cursor: url('/cursors/finger.png?v=2') 8 8, pointer;
 }
 .cursor-magnifyingglass {
-  cursor: url('/cursors/magnifyingglass.png?v=2') 0 0, zoom-in;
+  cursor: url('/cursors/magnifyingglass.png?v=2') 16 16, zoom-in;
 }
 
 a, button, [role="button"], .cursor-finger, .pointer {
-  cursor: url('/cursors/finger.png?v=2') 0 0, pointer;
+  cursor: url('/cursors/finger.png?v=2') 8 8, pointer;
+  padding: 4px;
+  border-radius: 4px;
 }
 
 img:hover, .masonry-gallery-item img:hover, .zoom-on-hover:hover, .hover\:cursor-pointer:hover, .project-container img:hover, .project-container video:hover {
@@ -687,7 +690,31 @@ img:hover, .masonry-gallery-item img:hover, .zoom-on-hover:hover, .hover\:cursor
 }
 
 .lightbox-modal, .zoom-in, .cursor-magnifyingglass, .zoom-cursor, .zoomable-image, .zoom-in-cursor, .lightbox-image, .lightbox-content, .zoom-in:hover {
-  cursor: url('/cursors/magnifyingglass.png?v=2') 0 0, zoom-in !important;
+  cursor: url('/cursors/magnifyingglass.png?v=2') 16 16, zoom-in !important;
+}
+
+/* Ensure clickable zoomed images use finger cursor */
+.zoom-in:hover, .zoomable-image:hover, .zoom-in-cursor:hover {
+  cursor: url('/cursors/finger.png?v=2') 8 8, pointer !important;
+}
+
+/* Override inline cursor styles for clickable images and videos */
+.my-masonry-grid img[style*="cursor: pointer"],
+.my-masonry-grid video[style*="cursor: pointer"],
+.masonry-gallery-item img[style*="cursor: pointer"],
+.masonry-gallery-item video[style*="cursor: pointer"] {
+  cursor: url('/cursors/finger.png?v=2') 8 8, pointer !important;
+}
+
+/* Ensure contact envelope uses custom finger cursor */
+.contact-envelope,
+.contact-envelope:hover,
+.contact-envelope *,
+.contact-envelope:hover *,
+.contact-envelope span,
+.contact-envelope svg,
+.contact-envelope svg * {
+  cursor: url('/cursors/finger.png?v=2') 12 12 !important;
 }
 
 img[src*="JOP_Sticker_LARGE-01.png"],

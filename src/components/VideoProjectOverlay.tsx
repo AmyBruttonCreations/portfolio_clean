@@ -203,7 +203,14 @@ export default function VideoProjectOverlay({
           autoPlay
           loop
           muted
+          playsInline
           className={`w-full h-full object-cover ${styles.video}`}
+          onPlay={(e) => {
+            // Prevent play/pause conflicts
+            e.currentTarget.play().catch(() => {
+              // Ignore play errors - they're usually harmless
+            });
+          }}
         />
       </div>
       {/* Overlay slides fully off-screen to the left when openOverlay is true */}
