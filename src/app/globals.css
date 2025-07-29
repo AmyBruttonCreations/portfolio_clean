@@ -20,7 +20,7 @@
 }
 
 body, html {
-  cursor: url('/cursors/arrow.png') 0 0, auto;
+  cursor: url('/cursors/arrow.png?v=2') 0 0, auto;
 }
 @keyframes bounce-in {
   0% {
@@ -669,17 +669,17 @@ body, html {
 
 /* Custom cursors */
 .cursor-arrow {
-  cursor: url('/cursors/arrow.png') 0 0, auto;
+  cursor: url('/cursors/arrow.png?v=2') 0 0, auto;
 }
 .cursor-finger {
-  cursor: url('/cursors/finger.png') 0 0, pointer;
+  cursor: url('/cursors/finger.png?v=2') 0 0, pointer;
 }
 .cursor-magnifyingglass {
-  cursor: url('/cursors/magnifyingglass.png') 0 0, zoom-in;
+  cursor: url('/cursors/magnifyingglass.png?v=2') 0 0, zoom-in;
 }
 
 a, button, [role="button"], .cursor-finger, .pointer {
-  cursor: url('/cursors/finger.png') 0 0, pointer;
+  cursor: url('/cursors/finger.png?v=2') 0 0, pointer;
 }
 
 img:hover, .masonry-gallery-item img:hover, .zoom-on-hover:hover, .hover\:cursor-pointer:hover, .project-container img:hover, .project-container video:hover {
@@ -687,7 +687,7 @@ img:hover, .masonry-gallery-item img:hover, .zoom-on-hover:hover, .hover\:cursor
 }
 
 .lightbox-modal, .zoom-in, .cursor-magnifyingglass, .zoom-cursor, .zoomable-image, .zoom-in-cursor, .lightbox-image, .lightbox-content, .zoom-in:hover {
-  cursor: url('/cursors/magnifyingglass.png') 0 0, zoom-in !important;
+  cursor: url('/cursors/magnifyingglass.png?v=2') 0 0, zoom-in !important;
 }
 
 img[src*="JOP_Sticker_LARGE-01.png"],

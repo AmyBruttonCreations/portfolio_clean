@@ -1,0 +1,485 @@
+/* HomePage.module.css */
+
+.container {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+.heroSection {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/homepage/hero.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 1rem;
+}
+
+.magentaVignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at center, rgba(239,20,129,0) 0%, rgba(239,20,129,0) 60%, rgba(239,20,129,0.85) 100%);
+  mix-blend-mode: multiply;
+}
+
+.yellowGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at center, rgba(255,220,100,0.45) 0%, rgba(255,220,100,0.18) 35%, rgba(255,220,100,0) 70%);
+  mix-blend-mode: lighten;
+}
+
+.heroTitle {
+  color: #fff;
+  font-size: clamp(2.2rem, 8vw, 12rem);
+  font-weight: 900;
+  text-shadow: 0 0 6px #FDF8F3, 0 0 12px #FDF8F3;
+  text-align: center;
+  letter-spacing: 0.04em;
+  border-radius: 1rem;
+  padding: 0.5em 1.5em;
+  position: relative;
+  z-index: 3;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  text-transform: uppercase;
+  width: 100%;
+  overflow: visible;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.heroTitleContainer {
+  width: 100%;
+}
+
+.swipeReveal {
+  overflow: visible;
+  display: block;
+}
+
+/* About Section */
+.aboutSection {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-image: url('/homepage/AboutMe_BG_Mint.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 1rem;
+}
+
+.aboutBox {
+  background: #E4A4BD;
+  opacity: 1;
+  border-radius: 2rem;
+  transform: rotate(-2.5deg);
+  box-shadow: 0 4px 32px 0 rgba(239, 20, 129, 0.08);
+  width: 90%;
+  max-width: 900px;
+  min-width: 280px;
+  min-height: 320px;
+  margin: 0 auto;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.aboutRow {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  margin-bottom: 0.5rem;
+  height: 180px;
+}
+
+.aboutPhoto {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: #fff;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.aboutPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 70%;
+}
+
+.aboutContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.aboutTitle {
+  font-weight: 900;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #FDF8F3;
+  line-height: 1.1;
+  margin: 0;
+  padding: 0;
+  text-shadow: 0 0 6px #FDF8F3, 0 0 12px #FDF8F3;
+}
+
+.aboutCaption {
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: #EF1481;
+  margin-top: 0.5rem;
+  text-transform: none;
+  letter-spacing: 0.01em;
+}
+
+.aboutTextContainer {
+  width: 90%;
+  align-self: center;
+  margin-bottom: 1.25rem;
+}
+
+.aboutMainText {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #FDF8F3;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5ch;
+}
+
+.aboutSecondaryText {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #EF1481;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5ch;
+}
+
+.highlightText {
+  color: #EF1481;
+  font-weight: 900;
+}
+
+/* Skillset Section */
+.skillsetSection {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/homepage/skillset_HD.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 1rem;
+}
+
+.skillsetContainer {
+  display: flex;
+  align-items: flex-end;
+  width: 92%;
+  max-width: 1400px;
+  margin: 0 auto 40px auto;
+  border-radius: 0;
+  background: none;
+  position: relative;
+  min-height: 260px;
+  justify-content: center;
+}
+
+.skillsetBar {
+  background: #E4A4BD;
+  border-top-left-radius: 2rem;
+  border-bottom-left-radius: 2rem;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  min-width: 800px;
+  width: 800px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.skillsetTitle {
+  font-weight: 900;
+  font-size: clamp(1.5rem, 7vw, 8rem);
+  color: #FDF8F3;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  display: inline-block;
+  overflow: visible;
+  text-shadow: 0 0 6px #FDF8F3, 0 0 12px #FDF8F3;
+  line-height: 1.1;
+  width: 100%;
+}
+
+.skillsetMenu {
+  background: #E4A4BD;
+  border-top-right-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  border-top-left-radius: 2rem;
+  border-bottom-left-radius: 0;
+  flex: 1;
+  min-width: 800px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem 4rem 2.5rem 6rem;
+  gap: 2rem;
+  z-index: 1;
+}
+
+.skillsetRow {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  margin-bottom: 0;
+}
+
+.skillsetThumb {
+  width: 288px;
+  height: 162px;
+  background: #fff;
+  border-radius: 0;
+  overflow: hidden;
+  flex: none;
+}
+
+.skillsetThumb img,
+.skillsetThumb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.skillsetLink {
+  font-weight: 900;
+  font-size: 2rem;
+  color: #EF1481;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+
+/* Responsive styles */
+@media (max-width: 700px) {
+  .heroTitle {
+    font-size: 2.2rem !important;
+    padding: 0.5em 0.5em !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .aboutSection {
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  
+  .aboutBox {
+    width: 95vw !important;
+    min-width: 0 !important;
+    padding: 1.2rem !important;
+    transform: scale(0.8) !important;
+    transform-origin: center center !important;
+    margin: 0 auto !important;
+  }
+  
+  .aboutRow {
+    flex-direction: column !important;
+    height: auto !important;
+    gap: 1.2rem !important;
+  }
+  
+  .aboutPhoto {
+    width: 120px !important;
+    height: 120px !important;
+    display: none !important;
+  }
+  
+  .aboutTitle {
+    font-size: 2rem !important;
+  }
+  
+  .aboutCaption {
+    font-size: 1rem !important;
+    margin-top: 0.4rem !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0.5rem !important;
+    text-align: left !important;
+  }
+  
+  .aboutMainText,
+  .aboutSecondaryText {
+    font-size: 0.92rem !important;
+  }
+}
+
+/* Add specific media query for smaller tablets */
+@media (max-width: 768px) {
+  .aboutBox {
+    width: 95vw !important;
+    min-width: 0 !important;
+    padding: 1rem !important;
+    transform: scale(0.9) !important;
+    transform-origin: center center !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* Tablets in landscape - use vertical layout for consistency */
+@media (min-width: 768px) and (max-width: 1366px) and (orientation: landscape) {
+  .skillsetContainer {
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100vw !important;
+  }
+  
+  .skillsetBar {
+    width: 75vw !important;
+    min-width: 0 !important;
+    max-width: 75vw !important;
+    border-top-left-radius: 2rem !important;
+    border-top-right-radius: 2rem !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    height: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .skillsetMenu {
+    min-width: 0 !important;
+    width: 75vw !important;
+    max-width: 75vw !important;
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 2rem !important;
+    border-bottom-right-radius: 2rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .skillsetRow {
+    flex-direction: column !important;
+    gap: 1.2rem !important;
+  }
+  
+  .skillsetThumb {
+    width: 100% !important;
+    max-width: 180px !important;
+    height: auto !important;
+  }
+  
+  .skillsetLink {
+    font-size: 1.1rem !important;
+  }
+}
+
+@media (max-width: 900px), (max-aspect-ratio: 1/1) {
+  .skillsetContainer {
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100vw !important;
+  }
+  
+  .skillsetBar {
+    width: 75vw !important;
+    min-width: 0 !important;
+    max-width: 75vw !important;
+    border-top-left-radius: 2rem !important;
+    border-top-right-radius: 2rem !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    height: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .skillsetMenu {
+    min-width: 0 !important;
+    width: 75vw !important;
+    max-width: 75vw !important;
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 2rem !important;
+    border-bottom-right-radius: 2rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .skillsetRow {
+    flex-direction: column !important;
+    gap: 1.2rem !important;
+  }
+  
+  .skillsetThumb {
+    width: 100% !important;
+    max-width: 180px !important;
+    height: auto !important;
+  }
+  
+  .skillsetLink {
+    font-size: 1.1rem !important;
+  }
+} 

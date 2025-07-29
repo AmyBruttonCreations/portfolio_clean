@@ -3,22 +3,14 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useCallback } from "react";
 import HamburgerMenu from "../HamburgerMenu";
-import InfoBox from "../InfoBox";
+
 import React from "react";
 import { useIsMobile } from '../../utils/useIsMobile';
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
 import MasonryGallery from "../MasonryGallery";
 import PixelArtSprite from "../../components/PixelArtSprite";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/vector-art", label: "Vector Art" },
-  { href: "/cel-animation", label: "Cel Animation" },
-  { href: "/illustration-2d", label: "2D Illustration" },
-  { href: "/illustration-3d", label: "3D Illustration" },
-  { href: "/contact", label: "Contact" },
 
-];
 
 const projects: Array<{
   title: string;
@@ -61,69 +53,9 @@ const projects: Array<{
   },
 ];
 
-// Expanding sliver gallery component
-function ExpandingSliverGallery({ images, alt }: { images: string[]; alt: string }) {
-  const [hovered, setHovered] = useState<number | null>(null);
-  return (
-    <div className="relative w-full h-screen flex flex-row overflow-hidden">
-      {images.map((img, i) => (
-        <img
-          key={i}
-          src={img}
-          alt={alt}
-          className={`h-full w-full object-cover cursor-pointer transition-all duration-500 ${hovered === i ? 'flex-[30]' : 'flex-[1]'}`}
-          style={{ minWidth: 0 }}
-          onMouseEnter={() => setHovered(i)}
-          onMouseLeave={() => setHovered(null)}
-        />
-      ))}
-    </div>
-  );
-}
 
-// InfoPill component
-function InfoPill({ text }: { text: string }) {
-  const [hovered, setHovered] = useState(false);
-  const [toggled, setToggled] = useState(false);
-  // Use the same mobile detection as elsewhere in the file
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-  return (
-    <div
-      className={`transition-all duration-300 inline-flex items-center justify-center cursor-pointer rounded-full magenta-glow`}
-      style={{
-        background: '#85DBD8',
-        width: (hovered || toggled) ? 'fit-content' : 40,
-        maxWidth: '90vw',
-        minWidth: 40,
-        height: 40,
-        boxShadow: '0 0 6px 1.5px #EF1481, 0 0 12px 3px #EF1481',
-        fontSize: 28,
-        paddingLeft: (hovered || toggled) ? 16 : 0,
-        paddingRight: (hovered || toggled) ? 16 : 0,
-        transition: 'width 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
-      }}
-      onMouseEnter={() => { if (!isMobile) setHovered(true); }}
-      onMouseLeave={() => { if (!isMobile) setHovered(false); }}
-      onClick={() => { if (isMobile) setToggled(t => !t); }}
-    >
-      <span className="flex items-center justify-center w-10 h-10 font-bold" style={{ color: '#EF1481' }}>i</span>
-      {(hovered || toggled) && (
-        <span
-          className="ml-2 text-gray-900 dark:text-gray-100 font-medium transition-all duration-300 opacity-100"
-          style={{
-            fontSize: '1.25rem',
-            whiteSpace: 'normal',
-            width: '100%',
-            transition: 'all 0.3s cubic-bezier(.68,-0.6,.32,1.6)',
-            display: 'block',
-          }}
-        >
-          {text}
-        </span>
-      )}
-    </div>
-  );
-}
+
+
 
 // Add VideoProjectOverlay component for video overlays
 const defaultOverlayColor = 'rgba(200, 210, 60, 0.5)';

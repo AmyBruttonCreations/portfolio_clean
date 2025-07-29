@@ -4,15 +4,9 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useIsMobile } from '../utils/useIsMobile';
 import { usePathname } from 'next/navigation';
 import { MarkerHighlightInView } from './MarkerHighlightInView';
+import { navLinks } from '../config/navigation';
 
-const defaultNavLinks = [
-  { href: "/", label: "Home" },
-  { href: "/vector-art", label: "Vector Art" },
-  { href: "/cel-animation", label: "Cel Animation" },
-  { href: "/illustration-2d", label: "2D and 3D Illustration" },
-];
-
-export default function HamburgerMenu({ navLinks = defaultNavLinks }) {
+export default function HamburgerMenu({ customNavLinks = navLinks }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [iconBounced, setIconBounced] = useState(false);
   const [showMenuLinks, setShowMenuLinks] = useState(false);
@@ -153,7 +147,7 @@ export default function HamburgerMenu({ navLinks = defaultNavLinks }) {
       {/* Desktop pill menu */}
       {!isMobile && showMenuLinks && (
         <nav className="flex-1 flex items-center justify-between w-full px-6">
-          {navLinks.map((item, i) => (
+          {customNavLinks.map((item, i) => (
             <Link
               key={item.label}
               href={item.href}
@@ -208,7 +202,7 @@ export default function HamburgerMenu({ navLinks = defaultNavLinks }) {
           }}
           onAnimationEnd={handleMobileMenuAnimationEnd}
         >
-          {navLinks.map((item, i) => (
+          {customNavLinks.map((item, i) => (
             <Link
               key={item.label}
               href={item.href}
