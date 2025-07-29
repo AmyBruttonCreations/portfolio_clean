@@ -1,0 +1,122 @@
+/* VideoProjectOverlay Component Styles */
+
+.container {
+  min-height: 320px;
+}
+
+.dashedLine {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.arrowButton {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 10%;
+  min-width: 48px;
+  max-width: 96px;
+  z-index: 1000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: opacity 0.7s;
+  opacity: 1;
+  background: transparent;
+}
+
+.arrowContainer {
+  margin-left: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrowSvg {
+  display: block;
+  transition: filter 0.3s, transform 0.7s;
+}
+
+.arrowSvgOpen {
+  transform: scaleX(-1);
+}
+
+.arrowSvgClosed {
+  transform: scaleX(1);
+}
+
+.videoContainer {
+  position: relative;
+  z-index: 0;
+}
+
+.video {
+  border-radius: 0;
+}
+
+.overlayBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #FDF8F3;
+  padding: 2rem;
+  justify-content: center;
+  z-index: 2;
+}
+
+.overlayTextBase {
+  color: #FDF8F3;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  text-shadow: 0 0 6px #FDF8F3, 0 0 12px #FDF8F3;
+  text-align: right;
+  width: 100%;
+  padding-right: 3vw;
+}
+
+.overlayTextTitle {
+  font-weight: 900;
+  font-size: clamp(1rem, 4vw, 2.4rem);
+  margin-bottom: 0.2em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.overlayTextCompany {
+  font-weight: 400;
+  font-size: clamp(0.85rem, 2.5vw, 1.35rem);
+  text-transform: lowercase;
+  margin: 0.5em 0;
+}
+
+.overlayTextSoftware {
+  font-weight: 400;
+  font-size: clamp(0.75rem, 2vw, 1.1rem);
+  text-transform: lowercase;
+  margin: 0.5em 0;
+}
+
+.overlayTextDescription {
+  font-weight: 400;
+  font-size: clamp(0.7rem, 1.8vw, 1rem);
+  text-transform: none;
+  margin: 1em 0;
+  line-height: 1.4;
+}
+
+.clickableOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+} 

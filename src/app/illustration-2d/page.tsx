@@ -7,7 +7,7 @@ import HamburgerMenu from "../HamburgerMenu";
 import React from "react";
 import { useIsMobile } from '../../utils/useIsMobile';
 import { useInViewAnimation, MarkerHighlightInView } from '../MarkerHighlightInView';
-import ProjectOverlayGallery from '../ProjectOverlayGallery';
+
 import MasonryGallery, { MasonryGalleryItem } from "../MasonryGallery";
 import LightboxModal from '../../components/LightboxModal';
 import MobileBanner from '../../components/MobileBanner';
